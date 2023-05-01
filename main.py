@@ -1,8 +1,6 @@
 import os
 import json
-from watchdog.observers import Observer
-from watchdog.events import FileSystemEventHandler
-import re
+import time
 
 def check_settings():
     if os.path.isfile("./settings.json"):
@@ -23,24 +21,28 @@ def check_settings():
             print("Process will exit now.")
             quit()
 
-class SaveHandler(FileSystemEventHandler):
-    def on_any_event(self, event):
-        event_type, src_path = event.event_type, event.src_path
-        print(event_type, src_path)
+def monitor_file_for_changes(path, interval, callback):
+    last_time = 0
+    last_data = ""
+    while True:
+        now = time.time()
+        new_data = last_data
+        if not os.path.isfile(path):
+            new_data = ""
+        elif os.path.getmtime(path) > last_time:
+            #file was modified since we last checked
+            with open(path, "r") as f:
+                new_data = f.read()
+        if new_data != last_data:
+            callback(new_data)
+            last_data = new_data
+        last_time = now
+        time.sleep(interval)
 
-            
 
 def main():
     #check if settings exists
     settings = check_settings()
-
-    observer = Observer()
-    event_handler = SaveHandler()
-
-    observer.schedule(event_handler, settings["CelesteSaveFolder"], recursive=False)
-    observer.start()
-    input("Type any key to stop")
-    observer.stop()
     
 
 if __name__ == "__main__":
