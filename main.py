@@ -3,6 +3,8 @@ import json
 import time
 import threading
 
+from saveparser import CelesteSaveData
+
 
 def check_settings():
     if os.path.isfile("./settings.json"):
@@ -47,23 +49,31 @@ def save_path_from_slot(saves_dir, slot):
     return os.path.join(saves_dir, slot + ".celeste")
 
 
+def print_total_file_time(xml):
+    save = CelesteSaveData(xml)
+    print(save.total_time_100_ns)
+
+
 def main():
     # check if settings exists
     settings = check_settings()
 
     il_file_path = save_path_from_slot(settings["CelesteSaveFolder"], settings["ILSaveSlot"])
-    il_file_checker = threading.Thread(target=monitor_file_for_changes, args=(il_file_path, 0.1, lambda x: print("il file changed")))
+    il_file_checker = threading.Thread(
+        target=monitor_file_for_changes,
+        args=(il_file_path, 0.1, print_total_file_time))
     il_file_checker.daemon = True
     il_file_checker.start()
 
     anypercent_file_path = save_path_from_slot(settings["CelesteSaveFolder"], settings["AnyPercentSaveSlot"])
-    anypercent_file_checker = threading.Thread(target=monitor_file_for_changes, args=(anypercent_file_path, 0.1, lambda x: print("any% file changed")))
+    anypercent_file_checker = threading.Thread(
+        target=monitor_file_for_changes,
+        args=(anypercent_file_path, 0.1, print_total_file_time))
     anypercent_file_checker.daemon = True
     anypercent_file_checker.start()
 
     input("Press enter to stop")
-    il_file_checker.join()
-    anypercent_file_checker.join()
+    quit()
 
 
 if __name__ == "__main__":
