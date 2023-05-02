@@ -35,6 +35,7 @@ class CelesteSaveData:
         self.best_chapter_times_100_ns = {}
         self.chapter_completed = {}
         self.chapter_death_counts = {}
+        self.checkpoints_completed = {}
 
         for area_data in areas_data.findall("AreaStats"):
             chapter_id = int(area_data.get("ID"))
@@ -49,8 +50,16 @@ class CelesteSaveData:
                     self.best_chapter_times_100_ns[level_id] = int(sides[side_id].get("BestTime"))
                     self.chapter_completed[level_id] = sides[side_id].get("Completed") == "true"
                     self.chapter_death_counts[level_id] = int(sides[side_id].get("Deaths"))
+                    self.checkpoints_completed[level_id] = len(sides[side_id].find("Checkpoints").findall("string"))
+                    if self.chapter_completed[level_id]:
+                        self.checkpoints_completed += 1
             else:
-                self.total_chapter_times_100_ns[LEVEL_CODE_BY_ID[chapter_id]] = int(sides[0].get("TimePlayed"))
-                self.best_chapter_times_100_ns[LEVEL_CODE_BY_ID[chapter_id]] = int(sides[0].get("BestTime"))
-                self.chapter_completed[LEVEL_CODE_BY_ID[chapter_id]] = sides[0].get("Completed") == "true"
-                self.chapter_death_counts[LEVEL_CODE_BY_ID[chapter_id]] = int(sides[0].get("Deaths"))
+                level_id = LEVEL_CODE_BY_ID[chapter_id]
+                self.total_chapter_times_100_ns[level_id] = int(sides[0].get("TimePlayed"))
+                self.best_chapter_times_100_ns[level_id] = int(sides[0].get("BestTime"))
+                self.chapter_completed[level_id] = sides[0].get("Completed") == "true"
+                self.chapter_death_counts[level_id] = int(sides[0].get("Deaths"))
+                self.checkpoints_completed[level_id] = len(sides[0].find("Checkpoints").findall("string"))
+                if self.chapter_completed[level_id]:
+                    self.checkpoints_completed[level_id] += 1
+
