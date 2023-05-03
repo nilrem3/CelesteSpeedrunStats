@@ -63,7 +63,9 @@ class CelesteSaveData:
 
         self.total_chapter_times_100_ns = {}
         self.best_chapter_times_100_ns = {}
+        self.best_chapter_full_complete_times_100_ns = {}
         self.chapter_completed = {}
+        self.chapter_full_completed = {}
         self.chapter_death_counts = {}
         self.checkpoints_completed = {}
         self.hearts = {}
@@ -77,6 +79,8 @@ class CelesteSaveData:
             has_sides = chapter_id in (1, 2, 3, 4, 5, 6, 7, 9)  # ids of levels that have b- and c-sides
 
             self.cassettes[chapter_id] = area_data.get("Cassette") == "true"
+            self.best_chapter_times_100_ns[chapter_id] = area_data.get("BestFullClearTime")
+            self.chapter_full_completed[chapter_id] = area_data.get("FullClear") == "true"
 
             if has_sides:
                 for side_id in range(3 if has_sides else 1):
@@ -91,6 +95,6 @@ class CelesteSaveData:
                     self.hearts[level_id] = sides[side_id].get("HeartGem") == "true"
                     self.num_red_berries[level_id] = 0
                     for berry in sides[side_id].find("Strawberries").findall("EntityID"):
-                        if berry.get("Key") in RED_BERRY_IDS_BY_LEVEL[level_id]:
+                        if berry.get("Key") in RED_BERRY_IDS_BY_LEVEL[level_id]: # make sure it's a red berry not a golden
                             self.num_red_berries += 1
 
