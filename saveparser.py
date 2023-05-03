@@ -68,6 +68,7 @@ class CelesteSaveData:
         self.checkpoints_completed = {}
         self.hearts = {}
         self.cassettes = {}
+        self.num_red_berries = {}
 
         for area_data in areas_data.findall("AreaStats"):
             chapter_id = int(area_data.get("ID"))
@@ -88,4 +89,8 @@ class CelesteSaveData:
                     if self.chapter_completed[level_id]:
                         self.checkpoints_completed += 1
                     self.hearts[level_id] = sides[side_id].get("HeartGem") == "true"
+                    self.num_red_berries[level_id] = 0
+                    for berry in sides[side_id].find("Strawberries").findall("EntityID"):
+                        if berry.get("Key") in RED_BERRY_IDS_BY_LEVEL[level_id]:
+                            self.num_red_berries += 1
 
