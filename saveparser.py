@@ -56,6 +56,8 @@ class CelesteSaveData:
     def __init__(self, xml: str):
         save_file = ET.fromstring(xml)
 
+        self.file_name = save_file.find("Name").text
+
         self.total_time_100_ns = int(save_file.find("Time").text)
         self.death_count = int(save_file.find("TotalDeaths").text)
 
