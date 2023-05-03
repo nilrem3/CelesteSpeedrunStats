@@ -93,10 +93,10 @@ class CelesteSaveData:
                     self.chapter_death_counts[level_id] = int(sides[side_id].get("Deaths"))
                     self.checkpoints_completed[level_id] = len(sides[side_id].find("Checkpoints").findall("string"))
                     if self.chapter_completed[level_id]:
-                        self.checkpoints_completed += 1
+                        self.checkpoints_completed[level_id] += 1
                     self.hearts[level_id] = sides[side_id].get("HeartGem") == "true"
                     self.num_red_berries[level_id] = 0
                     for berry in sides[side_id].find("Strawberries").findall("EntityID"):
                         if berry.get("Key") in RED_BERRY_IDS_BY_LEVEL[level_id]: # make sure it's a red berry not a golden
-                            self.num_red_berries += 1
+                            self.num_red_berries[level_id] += 1
 
