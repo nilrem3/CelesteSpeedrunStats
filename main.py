@@ -55,6 +55,12 @@ def print_total_file_time(xml):
     save = CelesteSaveData(xml)
     print(save.total_time_100_ns)
 
+def input_loop(msg_queue):
+    while True:
+        command = input()
+        msg_queue.put(command)
+
+
 
 def main():
     # check if settings exists
@@ -62,6 +68,7 @@ def main():
     
     il_file_queue = queue.Queue()
     anypercent_file_queue = queue.Queue()
+    command_queue = queue.Queue()
 
     il_file_path = save_path_from_slot(settings["CelesteSaveFolder"], settings["ILSaveSlot"])
     il_file_checker = threading.Thread(
@@ -77,12 +84,24 @@ def main():
     anypercent_file_checker.daemon = True
     anypercent_file_checker.start()
 
+    command_reader = threading.Thread(
+            target=input_loop,
+            args=(command_queue,))
+    command_reader.daemon = True
+    command_reader.start()
+
     while True:
         try:
             new_il_save = il_file_queue.get_nowait()
             print(new_il_save)
         except queue.Empty:
-            print("empty queue")
+            pass
+        try:
+            command = command_queue.get_nowait()
+            if command == "quit":
+                quit()
+        except queue.Empty:
+            pass
         time.sleep(0.1)
     quit()
 
