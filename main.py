@@ -2,6 +2,8 @@ import os
 import json
 import time
 import threading
+import queue
+import sys
 
 from saveparser import CelesteSaveData
 
@@ -57,22 +59,31 @@ def print_total_file_time(xml):
 def main():
     # check if settings exists
     settings = check_settings()
+    
+    il_file_queue = queue.Queue()
+    anypercent_file_queue = queue.Queue()
 
     il_file_path = save_path_from_slot(settings["CelesteSaveFolder"], settings["ILSaveSlot"])
     il_file_checker = threading.Thread(
         target=monitor_file_for_changes,
-        args=(il_file_path, 0.1, print_total_file_time))
+        args=(il_file_path, 0.1, il_file_queue.put))
     il_file_checker.daemon = True
     il_file_checker.start()
 
     anypercent_file_path = save_path_from_slot(settings["CelesteSaveFolder"], settings["AnyPercentSaveSlot"])
     anypercent_file_checker = threading.Thread(
         target=monitor_file_for_changes,
-        args=(anypercent_file_path, 0.1, print_total_file_time))
+        args=(anypercent_file_path, 0.1, anypercent_file_queue.put))
     anypercent_file_checker.daemon = True
     anypercent_file_checker.start()
 
-    input("Press enter to stop")
+    while True:
+        try:
+            new_il_save = il_file_queue.get_nowait()
+            print(new_il_save)
+        except queue.Empty:
+            print("empty queue")
+        time.sleep(0.1)
     quit()
 
 
