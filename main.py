@@ -2,6 +2,7 @@ import os
 import json
 import time
 import threading
+import queue
 
 from saveparser import CelesteSaveData
 
@@ -54,6 +55,12 @@ def print_total_file_time(xml):
     print(save.total_time_100_ns)
 
 
+def input_loop(msg_queue):
+    while True:
+        command = input()
+        msg_queue.put(command)
+
+
 def main():
     # check if settings exists
     settings = check_settings()
@@ -77,8 +84,19 @@ def main():
     anypercent_file_checker.daemon = True
     anypercent_file_checker.start()
 
-    input("Press enter to stop")
-    quit()
+    command_queue = queue.Queue()
+    command_reader = threading.Thread(target=input_loop, args=(command_queue,))
+    command_reader.daemon = True
+    command_reader.start()
+
+    while True:
+        try:
+            command = command_queue.get_nowait()
+            if command == "quit":
+                quit()
+        except queue.Empty:
+            pass
+        time.sleep(0.1)
 
 
 if __name__ == "__main__":
