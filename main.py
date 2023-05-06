@@ -5,6 +5,8 @@ import threading
 import queue
 
 from saveparser import CelesteSaveData
+from rundata import CelesteRunData
+from individualleveldata import CelesteIndividualLevelData
 
 
 def check_settings():
@@ -65,11 +67,13 @@ def main():
     # check if settings exists
     settings = check_settings()
 
+    il_run_data = CelesteIndividualLevelData()
     il_file_path = save_path_from_slot(
         settings["CelesteSaveFolder"], settings["ILSaveSlot"]
     )
     il_file_checker = threading.Thread(
-        target=monitor_file_for_changes, args=(il_file_path, 0.1, print_total_file_time)
+        target=monitor_file_for_changes,
+        args=(il_file_path, 0.1, il_run_data.update_from_xml),
     )
     il_file_checker.daemon = True
     il_file_checker.start()
