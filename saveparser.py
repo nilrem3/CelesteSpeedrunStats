@@ -6,7 +6,7 @@ import constants
 class CelesteSaveData:
     def __init__(self, xml: str):
 
-        self.total_time_100_ns = {}
+        self.total_time_100_ns = 0
         self.death_count = 0
         self.current_session_id = 0
         self.current_session_mode = ""
@@ -15,18 +15,16 @@ class CelesteSaveData:
         self.current_session_berries = []
         self.current_session_cassette = False
         self.current_session_heart = False
-        self.total_chapter_times_100_ns = {}
-        self.best_chapter_times_100_ns = {}
-        self.chapter_completed = {}
-        self.chapter_death_counts = {}
-        self.checkpoints_completed = {}
-        self.hearts = {}
-        self.cassettes = {}
+        self.total_chapter_times_100_ns = {x: 0 for x in constants.LEVEL_IDS}
+        self.best_chapter_times_100_ns = {x: 0 for x in constants.LEVEL_IDS}
+        self.chapter_completed = {x: False for x in constants.LEVEL_IDS}
+        self.chapter_death_counts = {x: 0 for x in constants.LEVEL_IDS}
+        self.checkpoints_completed = {x: 0 for x in constants.LEVEL_IDS}
+        self.hearts = {x: False for x in constants.LEVEL_IDS}
+        self.cassettes = {x: False for x in range(11)}
 
         if xml == "":
-            pass
-        else:
-            return self.from_xml(xml)
+            return self.from_default_values()
 
     def from_xml(self, xml):
 
