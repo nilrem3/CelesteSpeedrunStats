@@ -5,11 +5,30 @@ import constants
 
 class CelesteSaveData:
     def __init__(self, xml: str):
-        try:
-            save_file = ET.fromstring(xml)
-        except ET.ParseError:
-            print("File deleted")
-            return
+
+        self.total_time_100_ns = 0
+        self.death_count = 0
+        self.current_session_id = 0
+        self.current_session_mode = ""
+        self.current_session_time = 0
+        self.current_session_deaths = 0
+        self.current_session_berries = []
+        self.current_session_cassette = False
+        self.current_session_heart = False
+        self.total_chapter_times_100_ns = {x: 0 for x in constants.LEVEL_IDS}
+        self.best_chapter_times_100_ns = {x: 0 for x in constants.LEVEL_IDS}
+        self.chapter_completed = {x: False for x in constants.LEVEL_IDS}
+        self.chapter_death_counts = {x: 0 for x in constants.LEVEL_IDS}
+        self.checkpoints_completed = {x: 0 for x in constants.LEVEL_IDS}
+        self.hearts = {x: False for x in constants.LEVEL_IDS}
+        self.cassettes = {x: False for x in range(11)}
+
+        if xml == "":
+            return self.from_default_values()
+
+    def from_xml(self, xml):
+
+        save_file = ET.fromstring(xml)
 
         self.total_time_100_ns = int(save_file.find("Time").text)
         self.death_count = int(save_file.find("TotalDeaths").text)
@@ -23,8 +42,8 @@ class CelesteSaveData:
         self.current_session_berries = save_file.find("CurrentSession").findall(
             "Strawberries"
         )
-        self.current_session_cassette = save_file.find("CurrentSession").get("Cassette")
-        self.current_session_heart = save_file.find("CurrentSession").get("HeartGem")
+        self.current_session_cassette = save_file.find("CurrentSession").get("Cassette") == "true"
+        self.current_session_heart = save_file.find("CurrentSession").get("HeartGem") == "true"
 
         areas_data = save_file.find("Areas")
 
