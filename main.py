@@ -58,17 +58,22 @@ def main():
     # check if settings exists
     settings = check_settings()
 
-    il_file_path = save_path_from_slot(settings["CelesteSaveFolder"], settings["ILSaveSlot"])
+    il_file_path = save_path_from_slot(
+        settings["CelesteSaveFolder"], settings["ILSaveSlot"]
+    )
     il_file_checker = threading.Thread(
-        target=monitor_file_for_changes,
-        args=(il_file_path, 0.1, print_total_file_time))
+        target=monitor_file_for_changes, args=(il_file_path, 0.1, print_total_file_time)
+    )
     il_file_checker.daemon = True
     il_file_checker.start()
 
-    anypercent_file_path = save_path_from_slot(settings["CelesteSaveFolder"], settings["AnyPercentSaveSlot"])
+    anypercent_file_path = save_path_from_slot(
+        settings["CelesteSaveFolder"], settings["AnyPercentSaveSlot"]
+    )
     anypercent_file_checker = threading.Thread(
         target=monitor_file_for_changes,
-        args=(anypercent_file_path, 0.1, print_total_file_time))
+        args=(anypercent_file_path, 0.1, print_total_file_time),
+    )
     anypercent_file_checker.daemon = True
     anypercent_file_checker.start()
 
