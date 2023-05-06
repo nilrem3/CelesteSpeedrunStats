@@ -86,6 +86,6 @@ class CelesteSaveData:
                     self.chapter_death_counts[level_id] = int(sides[side_id].get("Deaths"))
                     self.checkpoints_completed[level_id] = len(sides[side_id].find("Checkpoints").findall("string"))
                     if self.chapter_completed[level_id]:
-                        self.checkpoints_completed += 1
+                        self.checkpoints_completed[level_id] += 1
                     self.hearts[level_id] = sides[side_id].get("HeartGem") == "true"
 
