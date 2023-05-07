@@ -23,8 +23,8 @@ class CelesteSaveData:
         self.hearts = {x: False for x in constants.LEVEL_IDS}
         self.cassettes = {x: False for x in range(11)}
 
-        if xml == "":
-            return self.from_default_values()
+        if xml != "":
+            return self.from_xml(xml)
 
     def from_xml(self, xml):
 
