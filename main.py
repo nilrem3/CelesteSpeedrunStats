@@ -6,6 +6,8 @@ import queue
 import sys
 
 from saveparser import CelesteSaveData
+from rundata import CelesteRunData
+from individualleveldata import CelesteIndividualLevelData
 
 
 def check_settings():
@@ -54,12 +56,12 @@ def save_path_from_slot(saves_dir, slot):
 def print_total_file_time(xml):
     save = CelesteSaveData(xml)
     print(save.total_time_100_ns)
-
+    
+    
 def input_loop(msg_queue):
     while True:
         command = input()
         msg_queue.put(command)
-
 
 
 def main():
@@ -70,23 +72,30 @@ def main():
     anypercent_file_queue = queue.Queue()
     command_queue = queue.Queue()
 
-    il_file_path = save_path_from_slot(settings["CelesteSaveFolder"], settings["ILSaveSlot"])
+    il_run_data = CelesteIndividualLevelData()
+    il_file_path = save_path_from_slot(
+        settings["CelesteSaveFolder"], settings["ILSaveSlot"]
+    )
     il_file_checker = threading.Thread(
         target=monitor_file_for_changes,
-        args=(il_file_path, 0.1, il_file_queue.put))
+        args=(il_file_path, 0.1, il_run_data.update_from_xml),
+    )
     il_file_checker.daemon = True
     il_file_checker.start()
 
-    anypercent_file_path = save_path_from_slot(settings["CelesteSaveFolder"], settings["AnyPercentSaveSlot"])
+    anypercent_run_data = CelesteIndividualLevelData()
+    anypercent_file_path = save_path_from_slot(
+        settings["CelesteSaveFolder"], settings["AnyPercentSaveSlot"]
+    )
     anypercent_file_checker = threading.Thread(
         target=monitor_file_for_changes,
-        args=(anypercent_file_path, 0.1, anypercent_file_queue.put))
+        args=(anypercent_file_path, 0.1, anypercent_run_data.update_from_xml),
+    )
     anypercent_file_checker.daemon = True
     anypercent_file_checker.start()
 
-    command_reader = threading.Thread(
-            target=input_loop,
-            args=(command_queue,))
+    command_queue = queue.Queue()
+    command_reader = threading.Thread(target=input_loop, args=(command_queue,))
     command_reader.daemon = True
     command_reader.start()
 
@@ -103,7 +112,6 @@ def main():
         except queue.Empty:
             pass
         time.sleep(0.1)
-    quit()
 
 
 if __name__ == "__main__":
