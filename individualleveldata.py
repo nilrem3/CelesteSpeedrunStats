@@ -10,6 +10,7 @@ from saveparser import CelesteSaveData
 
 class CelesteIndividualLevelData:
     def __init__(self, settings):
+        self.previous_save_data = None
         self.reset()
         success = self.setup_sheet(settings)
         if not success:
@@ -18,7 +19,6 @@ class CelesteIndividualLevelData:
 
     # Reset all run data to empty
     def reset(self):
-        self.previous_save_data = None
         self.run_date_and_time = time.time()
         self.level_id = None
         self.run_time = 0
