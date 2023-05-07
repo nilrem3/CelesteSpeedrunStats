@@ -40,8 +40,11 @@ def monitor_file_for_changes(path, interval, callback):
             new_data = ""
         elif os.path.getmtime(path) > last_time:
             # file was modified since we last checked
-            with open(path, "r") as f:
-                new_data = f.read()
+            try:
+                with open(path, "r") as f:
+                    new_data = f.read()
+            except PermissionError:
+                continue # this just happens sometimes, we're not sure why, just try again next interval
         if new_data != last_data:
             callback(new_data)
             last_data = new_data

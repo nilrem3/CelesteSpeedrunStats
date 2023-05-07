@@ -61,7 +61,7 @@ class CelesteIndividualLevelData:
             input("")
 
         sh = gc.open_by_url(
-            "https://docs.google.com/spreadsheets/d/1ue_4Un0AaPN-CDziQKIaZgyY8dCCzGiCXdhNlDNv2f8/"
+            "https://docs.google.com/spreadsheets/d/1sN7iNMjt5YmM7wpgFQe2AiHjn3n-BH-Z80hHUK1K6sE/edit"
         )
 
         self.dataSheet = sh.worksheet("Raw Data")
