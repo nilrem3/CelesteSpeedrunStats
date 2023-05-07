@@ -1,5 +1,7 @@
 import os
 import time
+import gspread
+import json
 
 import constants
 
@@ -9,6 +11,7 @@ from saveparser import CelesteSaveData
 class CelesteIndividualLevelData:
     def __init__(self):
         self.reset()
+        self.setup_sheet()
 
     # Reset all run data to empty
     def reset(self):
@@ -33,14 +36,52 @@ class CelesteIndividualLevelData:
             self.previous_save_data = save
             return
 
-        # If we saved while in the last room we completed the run
         if self.level == constants.FINAL_ROOM_BY_LEVEL_ID[self.level_id]:
+            # If we saved while in the last room we completed the run
             print("Run completed with a time of {}".format(self.run_time))
-        # Else the run was reset before completing
+            self.completed_run = True
         else:
+            # Else the run was reset before completing
             print("Run reset in room {} at time {}".format(self.level, self.run_time))
+            self.completed_run = False
 
         self.previous_save_data = save
+
+        self.upload_data_to_sheet()
+        self.reset()
+
+    def setup_sheet(self):
+        try:
+            gc = gspread.service_account(filename="credentials.json")
+        except Exception as e:
+            print(e)
+            print(
+                "Could not find credentials.json, make sure you have the file in the same directory as the exe, and named exactly 'credentials.json'"
+            )
+            input("")
+
+        sh = gc.open_by_url(
+            "https://docs.google.com/spreadsheets/d/1ue_4Un0AaPN-CDziQKIaZgyY8dCCzGiCXdhNlDNv2f8/"
+        )
+
+        self.dataSheet = sh.worksheet("Raw Data")
+
+    def upload_data_to_sheet(self):
+        self.dataSheet.insert_row(
+            [
+                self.run_date_and_time,
+                self.level_id,
+                self.run_time,
+                self.deaths,
+                len(self.berries),
+                self.cassette,
+                self.heart,
+                self.level,
+                self.completed_run,
+            ],
+            index=4,
+            value_input_option="USER_ENTERED",
+        )
 
     def update_data_from_save(self, save):
         has_sides = save.current_session_id in (

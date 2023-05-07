@@ -35,26 +35,31 @@ class CelesteSaveData:
         self.total_time_100_ns = int(save_file.find("Time").text)
         self.death_count = int(save_file.find("TotalDeaths").text)
 
-        self.current_session_id = int(
-            save_file.find("CurrentSession").find("Area").get("ID")
-        )
-        self.current_session_mode = (
-            save_file.find("CurrentSession").find("Area").get("Mode")
-        )
-        self.current_session_time = int(save_file.find("CurrentSession").get("Time"))
-        self.current_session_deaths = int(
-            save_file.find("CurrentSession").get("Deaths")
-        )
-        self.current_session_berries = save_file.find("CurrentSession").findall(
-            "Strawberries"
-        )
-        self.current_session_cassette = (
-            save_file.find("CurrentSession").get("Cassette") == "true"
-        )
-        self.current_session_heart = (
-            save_file.find("CurrentSession").get("HeartGem") == "true"
-        )
-        self.current_session_level = save_file.find("CurrentSession").get("Level")
+        try:
+            self.current_session_id = int(
+                save_file.find("CurrentSession").find("Area").get("ID")
+            )
+            self.current_session_mode = (
+                save_file.find("CurrentSession").find("Area").get("Mode")
+            )
+            self.current_session_time = int(
+                save_file.find("CurrentSession").get("Time")
+            )
+            self.current_session_deaths = int(
+                save_file.find("CurrentSession").get("Deaths")
+            )
+            self.current_session_berries = save_file.find("CurrentSession").findall(
+                "Strawberries"
+            )
+            self.current_session_cassette = (
+                save_file.find("CurrentSession").get("Cassette") == "true"
+            )
+            self.current_session_heart = (
+                save_file.find("CurrentSession").get("HeartGem") == "true"
+            )
+            self.current_session_level = save_file.find("CurrentSession").get("Level")
+        except AttributeError:
+            print("No current session")
 
         areas_data = save_file.find("Areas")
 
