@@ -35,26 +35,31 @@ class CelesteSaveData:
         self.total_time_100_ns = int(save_file.find("Time").text)
         self.death_count = int(save_file.find("TotalDeaths").text)
 
-        self.current_session_id = int(
-            save_file.find("CurrentSession").find("Area").get("ID")
-        )
-        self.current_session_mode = (
-            save_file.find("CurrentSession").find("Area").get("Mode")
-        )
-        self.current_session_time = int(save_file.find("CurrentSession").get("Time"))
-        self.current_session_deaths = int(
-            save_file.find("CurrentSession").get("Deaths")
-        )
-        self.current_session_berries = save_file.find("CurrentSession").findall(
-            "Strawberries"
-        )
-        self.current_session_cassette = (
-            save_file.find("CurrentSession").get("Cassette") == "true"
-        )
-        self.current_session_heart = (
-            save_file.find("CurrentSession").get("HeartGem") == "true"
-        )
-        self.current_session_level = save_file.find("CurrentSession").get("Level")
+        try:
+            self.current_session_id = int(
+                save_file.find("CurrentSession").find("Area").get("ID")
+            )
+            self.current_session_mode = (
+                save_file.find("CurrentSession").find("Area").get("Mode")
+            )
+            self.current_session_time = int(
+                save_file.find("CurrentSession").get("Time")
+            )
+            self.current_session_deaths = int(
+                save_file.find("CurrentSession").get("Deaths")
+            )
+            self.current_session_berries = save_file.find("CurrentSession").findall(
+                "Strawberries"
+            )
+            self.current_session_cassette = (
+                save_file.find("CurrentSession").get("Cassette") == "true"
+            )
+            self.current_session_heart = (
+                save_file.find("CurrentSession").get("HeartGem") == "true"
+            )
+            self.current_session_level = save_file.find("CurrentSession").get("Level")
+        except AttributeError:
+            print("No current session")
 
         areas_data = save_file.find("Areas")
 
@@ -85,8 +90,12 @@ class CelesteSaveData:
             )  # ids of levels that have b- and c-sides
 
             self.cassettes[chapter_id] = area_data.get("Cassette") == "true"
-            self.best_chapter_times_100_ns[chapter_id] = area_data.get("BestFullClearTime")
-            self.chapter_full_completed[chapter_id] = area_data.get("FullClear") == "true"
+            self.best_chapter_times_100_ns[chapter_id] = area_data.get(
+                "BestFullClearTime"
+            )
+            self.chapter_full_completed[chapter_id] = (
+                area_data.get("FullClear") == "true"
+            )
 
             for side_id in range(3 if has_sides else 1):
                 level_id = constants.LEVEL_CODE_BY_ID[chapter_id] + (
@@ -109,6 +118,8 @@ class CelesteSaveData:
                     self.checkpoints_completed[level_id] += 1
                 self.hearts[level_id] = sides[side_id].get("HeartGem") == "true"
                 self.num_red_berries[level_id] = 0
-                    for berry in sides[side_id].find("Strawberries").findall("EntityID"):
-                        if berry.get("Key") in RED_BERRY_IDS_BY_LEVEL[level_id]: # make sure it's a red berry not a golden
-                            self.num_red_berries[level_id] += 1
+                for berry in sides[side_id].find("Strawberries").findall("EntityID"):
+                    if (
+                        berry.get("Key") in constants.RED_BERRY_IDS_BY_LEVEL[level_id]
+                    ):  # make sure it's a red berry not a golden
+                        self.num_red_berries[level_id] += 1
