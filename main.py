@@ -3,6 +3,7 @@ import json
 import time
 import threading
 import queue
+import sys
 
 from saveparser import CelesteSaveData
 from rundata import CelesteRunData
@@ -55,8 +56,8 @@ def save_path_from_slot(saves_dir, slot):
 def print_total_file_time(xml):
     save = CelesteSaveData(xml)
     print(save.total_time_100_ns)
-
-
+    
+    
 def input_loop(msg_queue):
     while True:
         command = input()
@@ -66,6 +67,10 @@ def input_loop(msg_queue):
 def main():
     # check if settings exists
     settings = check_settings()
+    
+    il_file_queue = queue.Queue()
+    anypercent_file_queue = queue.Queue()
+    command_queue = queue.Queue()
 
     il_run_data = CelesteIndividualLevelData()
     il_file_path = save_path_from_slot(
@@ -95,6 +100,11 @@ def main():
     command_reader.start()
 
     while True:
+        try:
+            new_il_save = il_file_queue.get_nowait()
+            print(new_il_save)
+        except queue.Empty:
+            pass
         try:
             command = command_queue.get_nowait()
             if command == "quit":

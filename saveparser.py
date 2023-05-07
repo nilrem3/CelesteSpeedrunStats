@@ -30,6 +30,8 @@ class CelesteSaveData:
     def from_xml(self, xml):
         save_file = ET.fromstring(xml)
 
+        self.file_name = save_file.find("Name").text
+
         self.total_time_100_ns = int(save_file.find("Time").text)
         self.death_count = int(save_file.find("TotalDeaths").text)
 
@@ -58,11 +60,14 @@ class CelesteSaveData:
 
         self.total_chapter_times_100_ns = {}
         self.best_chapter_times_100_ns = {}
+        self.best_chapter_full_complete_times_100_ns = {}
         self.chapter_completed = {}
+        self.chapter_full_completed = {}
         self.chapter_death_counts = {}
         self.checkpoints_completed = {}
         self.hearts = {}
         self.cassettes = {}
+        self.num_red_berries = {}
 
         for area_data in areas_data.findall("AreaStats"):
             chapter_id = int(area_data.get("ID"))
@@ -80,6 +85,8 @@ class CelesteSaveData:
             )  # ids of levels that have b- and c-sides
 
             self.cassettes[chapter_id] = area_data.get("Cassette") == "true"
+            self.best_chapter_times_100_ns[chapter_id] = area_data.get("BestFullClearTime")
+            self.chapter_full_completed[chapter_id] = area_data.get("FullClear") == "true"
 
             for side_id in range(3 if has_sides else 1):
                 level_id = constants.LEVEL_CODE_BY_ID[chapter_id] + (
@@ -101,3 +108,7 @@ class CelesteSaveData:
                 if self.chapter_completed[level_id]:
                     self.checkpoints_completed[level_id] += 1
                 self.hearts[level_id] = sides[side_id].get("HeartGem") == "true"
+                self.num_red_berries[level_id] = 0
+                    for berry in sides[side_id].find("Strawberries").findall("EntityID"):
+                        if berry.get("Key") in RED_BERRY_IDS_BY_LEVEL[level_id]: # make sure it's a red berry not a golden
+                            self.num_red_berries[level_id] += 1
