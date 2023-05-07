@@ -50,21 +50,20 @@ class CelesteIndividualLevelData:
         self.upload_data_to_sheet()
         self.reset()
 
-    def setup_sheet(self, settings):
+    def setup_sheet(self, settings) -> bool:
         try:
             gc = gspread.service_account(filename="credentials.json")
-        except Exception as e:
-            print(e)
+        except OSError as e:
             print(
                 "Could not find credentials.json, make sure you have the file in the same directory as the exe, and named exactly 'credentials.json'"
             )
-            input("")
-
+            return False
         sh = gc.open_by_url(
             settings["SheetUrl"]
         )
 
         self.dataSheet = sh.worksheet("Raw Data")
+        return True
 
     def upload_data_to_sheet(self):
         self.dataSheet.insert_row(
