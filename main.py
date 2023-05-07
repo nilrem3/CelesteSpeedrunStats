@@ -77,6 +77,7 @@ def main():
     command_queue = queue.Queue()
 
     il_run_data = CelesteIndividualLevelData(settings)
+
     il_file_path = save_path_from_slot(
         settings["CelesteSaveFolder"], settings["ILSaveSlot"]
     )
@@ -87,7 +88,8 @@ def main():
     il_file_checker.daemon = True
     il_file_checker.start()
 
-    anypercent_run_data = CelesteIndividualLevelData()
+    anypercent_run_data = CelesteIndividualLevelData(settings)
+
     anypercent_file_path = save_path_from_slot(
         settings["CelesteSaveFolder"], settings["AnyPercentSaveSlot"]
     )

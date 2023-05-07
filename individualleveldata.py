@@ -11,7 +11,10 @@ from saveparser import CelesteSaveData
 class CelesteIndividualLevelData:
     def __init__(self, settings):
         self.reset()
-        self.setup_sheet(settings)
+        success = self.setup_sheet(settings)
+        if not success:
+            print("Program will exit now.")
+            quit()
 
     # Reset all run data to empty
     def reset(self):
