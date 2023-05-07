@@ -3,6 +3,8 @@ import time
 
 import constants
 
+from saveparser import CelesteSaveData
+
 
 class CelesteRunData:
     def __init__(self):
@@ -23,8 +25,10 @@ class CelesteRunData:
                 )
                 self.chapters[level_id] = CelesteChapterData(level_id)
 
-    def update_from_xml(xml):
-        pass
+    def update_from_xml(self, xml):
+        save = CelesteSaveData(xml)
+
+        self.previous_save_data = save
 
 
 class CelesteChapterData:

@@ -78,12 +78,13 @@ def main():
     il_file_checker.daemon = True
     il_file_checker.start()
 
+    anypercent_run_data = CelesteIndividualLevelData()
     anypercent_file_path = save_path_from_slot(
         settings["CelesteSaveFolder"], settings["AnyPercentSaveSlot"]
     )
     anypercent_file_checker = threading.Thread(
         target=monitor_file_for_changes,
-        args=(anypercent_file_path, 0.1, print_total_file_time),
+        args=(anypercent_file_path, 0.1, anypercent_run_data.update_from_xml),
     )
     anypercent_file_checker.daemon = True
     anypercent_file_checker.start()

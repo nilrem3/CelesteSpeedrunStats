@@ -19,6 +19,38 @@ SIDE_CODE_BY_ID = {0: "a", 1: "b", 2: "c"}
 SIDE_CODE_BY_MODE = {"Normal": "a", "BSide": "b", "CSide": "c"}
 
 
+# UNFINISHED
+FINAL_ROOM_BY_LEVEL_ID = {
+    "prologue": "3",
+    "1a": "end",
+    "1b": "",
+    "1c": "",
+    "2a": "end_6",
+    "2b": "",
+    "2c": "",
+    "3a": "roof_7",
+    "3b": "",
+    "3c": "",
+    "4a": "d-10",
+    "4b": "",
+    "4c": "",
+    "5a": "e-11",
+    "5b": "d-05",
+    "5c": "",
+    "6a": "after-02",
+    "6b": "",
+    "6c": "",
+    "7a": "summit_checkpoint_1",
+    "7b": "",
+    "7c": "",
+    "epilogue": "inside",
+    "8a": "",
+    "8b": "",
+    "8c": "",
+    "9": "",
+}
+
+
 CHECKPOINTS_BY_LEVEL_ID = {
     "prologue": 1,
     "1a": 3,
@@ -256,4 +288,32 @@ RED_BERRY_IDS_BY_LEVEL = {
     "9": [],
 }
 
-LEVEL_IDS = ["prologue", "1a", "1b", "1c", "2a", "2b", "2c", "3a", "3b", "3c", "4a", "4b", "4c", "5a", "5b", "5c", "6a", "6b", "6c", "7a", "7b", "7c", "epilogue", "8a", "8b", "8c", "9"]
+LEVEL_IDS = [
+    "prologue",
+    "1a",
+    "1b",
+    "1c",
+    "2a",
+    "2b",
+    "2c",
+    "3a",
+    "3b",
+    "3c",
+    "4a",
+    "4b",
+    "4c",
+    "5a",
+    "5b",
+    "5c",
+    "6a",
+    "6b",
+    "6c",
+    "7a",
+    "7b",
+    "7c",
+    "epilogue",
+    "8a",
+    "8b",
+    "8c",
+    "9",
+]
