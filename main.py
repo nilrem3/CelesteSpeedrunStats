@@ -22,6 +22,7 @@ def check_settings():
             settings["CelesteSaveFolder"] = input("Path to your Celeste saves folder: ")
             settings["ILSaveSlot"] = input("Save slot you do IL runs on: ")
             settings["AnyPercentSaveSlot"] = input("Save slot for any% runs: ")
+            settings["SheetUrl"] = input("URL of the spreadsheet to track times in: ")
             with open("./settings.json", "w") as f:
                 f.write(json.dumps(settings))
                 return settings
@@ -75,7 +76,7 @@ def main():
     anypercent_file_queue = queue.Queue()
     command_queue = queue.Queue()
 
-    il_run_data = CelesteIndividualLevelData()
+    il_run_data = CelesteIndividualLevelData(settings)
     il_file_path = save_path_from_slot(
         settings["CelesteSaveFolder"], settings["ILSaveSlot"]
     )

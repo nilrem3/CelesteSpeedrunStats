@@ -9,9 +9,9 @@ from saveparser import CelesteSaveData
 
 
 class CelesteIndividualLevelData:
-    def __init__(self):
+    def __init__(self, settings):
         self.reset()
-        self.setup_sheet()
+        self.setup_sheet(settings)
 
     # Reset all run data to empty
     def reset(self):
@@ -50,7 +50,7 @@ class CelesteIndividualLevelData:
         self.upload_data_to_sheet()
         self.reset()
 
-    def setup_sheet(self):
+    def setup_sheet(self, settings):
         try:
             gc = gspread.service_account(filename="credentials.json")
         except Exception as e:
@@ -61,7 +61,7 @@ class CelesteIndividualLevelData:
             input("")
 
         sh = gc.open_by_url(
-            "https://docs.google.com/spreadsheets/d/1sN7iNMjt5YmM7wpgFQe2AiHjn3n-BH-Z80hHUK1K6sE/edit"
+            settings["SheetUrl"]
         )
 
         self.dataSheet = sh.worksheet("Raw Data")
