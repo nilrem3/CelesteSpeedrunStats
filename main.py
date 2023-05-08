@@ -3,12 +3,9 @@ import json
 import time
 import threading
 import queue
-from logging_system import LogMessage, logging_queue
+from logging_system import LogMessage, logging_queue, LogLevel
 from saveparser import CelesteSaveData
 from individualleveldata import CelesteIndividualLevelData
-
-logging_queue = queue.Queue()
-
 
 def check_settings():
     if os.path.isfile("./settings.json"):
@@ -43,12 +40,12 @@ def monitor_file_for_changes(path, interval, callback):
         elif os.path.getmtime(path) > last_time:
             # file was modified since we last checked
             if last_time != 0:
-                logging_queue.put(LogMessage(0, "File update detected, reading data."))
+                logging_queue.put(LogMessage(LogLevel.INFO, "File update detected, reading data."))
             try:
                 with open(path, "r") as f:
                     new_data = f.read()
             except PermissionError:
-                logging_queue.put(LogMessage(2, "Failed to read file {path}, insufficient permission."))
+                logging_queue.put(LogMessage(LogLevel.ERROR, "Failed to read file {path}, insufficient permission."))
                 continue # this just happens sometimes, we're not sure why, just try again next interval
         if new_data != last_data:
             callback(new_data)
@@ -94,6 +91,7 @@ def main():
     )
     il_file_checker.daemon = True
     il_file_checker.start()
+    logging_queue.put(LogMessage(LogLevel.INFO, "Started IL Thread"))
 
     anypercent_run_data = CelesteIndividualLevelData(settings)
 
@@ -106,6 +104,7 @@ def main():
     )
     anypercent_file_checker.daemon = True
     anypercent_file_checker.start()
+    logging_queue.put(LogMessage(LogLevel.INFO, "Started Any% Thread"))
 
     command_queue = queue.Queue()
     command_reader = threading.Thread(target=input_loop, args=(command_queue,))
@@ -130,9 +129,9 @@ def main():
         while not logging_queue.empty():
             try:
                 log_msg = logging_queue.get_nowait()
-                if True: # log_msg.loglevel >= current_log_level:
+                if log_msg.loglevel >= current_log_level:
                     print(log_msg.get_display_text())
-                    if log_msg.loglevel == 3: # fatal error
+                    if log_msg.loglevel == LogLevel.FATAL: # fatal error
                         quit()
             except queue.Empty:
                 break

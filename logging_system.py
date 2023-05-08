@@ -7,6 +7,12 @@ LOGGING_LEVEL_PREFIXES = {
     3: "\u001b[41m\u001b[1;37m[FATAL]\u001b[0m"
 }
 
+class LogLevel:
+    INFO = 0
+    WARN = 1
+    ERROR = 2
+    FATAL = 3
+
 logging_queue = queue.Queue()
 
 
