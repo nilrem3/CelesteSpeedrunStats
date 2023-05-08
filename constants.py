@@ -317,3 +317,8 @@ LEVEL_IDS = [
     "8c",
     "9",
 ]
+
+HELP_MESSAGE = """
+help: displays this message
+quit: closes the program
+"""

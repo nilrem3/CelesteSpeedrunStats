@@ -7,6 +7,7 @@ from logging_system import LogLevel, log_message
 from saveparser import CelesteSaveData
 from individualleveldata import CelesteIndividualLevelData
 import settings
+import constants
 
 def check_settings():
     if os.path.isfile("./settings.json"):
@@ -122,6 +123,8 @@ def main():
                 command = command_queue.get_nowait()
                 if command == "quit":
                     quit()
+                elif command == "help":
+                    print(constants.HELP_MESSAGE)
             except queue.Empty:
                 break
         time.sleep(0.1)
