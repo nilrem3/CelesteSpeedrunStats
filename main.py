@@ -74,6 +74,11 @@ def main():
     # check if settings exists
     settings = check_settings()
 
+    if not settings["ILSaveSlot"] in constants.VANILLA_SAVE_SLOTS:
+        log_message(LogLevel.WARN, f"IL Save Slot (slot {settings['ILSaveSlot']}) is only accessible in Everest.")
+    if not settings["AnyPercentSaveSlot"] in constants.VANILLA_SAVE_SLOTS:
+        log_message(LogLevel.WARN, f"Any% Save Slot (slot {settings['AnyPercentSaveSlot']}) is only accessible in Everest.")
+
     current_log_level = 0
 
     il_file_queue = queue.Queue()
@@ -91,7 +96,7 @@ def main():
     )
     il_file_checker.daemon = True
     il_file_checker.start()
-    log_message(LogLevel.INFO, "Started IL Thread")
+    log_message(LogLevel.OK, "Started IL Thread")
 
     anypercent_run_data = CelesteIndividualLevelData(settings)
 
@@ -104,12 +109,13 @@ def main():
     )
     anypercent_file_checker.daemon = True
     anypercent_file_checker.start()
-    log_message(LogLevel.INFO, "Sared Any% Thread")
+    log_message(LogLevel.OK, "Started Any% Thread")
 
     command_queue = queue.Queue()
     command_reader = threading.Thread(target=input_loop, args=(command_queue,))
     command_reader.daemon = True
     command_reader.start()
+    log_message(LogLevel.OK, "Started Command Thread")
 
     while True:
         try:
