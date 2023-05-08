@@ -20,16 +20,16 @@ def check_settings():
 
 def create_settings():
     result = input("No settings.json found, create settings file now? (y/n)")
-        if result == "y":
-            new_settings = {}
-            for s in settings.SETTINGS:
-                new_settings[s.name] = s.get_from_user()
-            with open("./settings.json", "w") as f:
-                f.write(json.dumps(new_settings))
-                return new_settings
-        else:
-            print("Process will exit now.")
-            quit()
+    if result == "y":
+        new_settings = {}
+        for s in settings.SETTINGS:
+            new_settings[s.name] = s.get_from_user()
+        with open("./settings.json", "w") as f:
+            f.write(json.dumps(new_settings))
+            return new_settings
+    else:
+        print("Process will exit now.")
+        quit()
 
 
 def monitor_file_for_changes(path, interval, callback):
