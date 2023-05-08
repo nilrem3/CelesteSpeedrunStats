@@ -50,7 +50,9 @@ class CelesteIndividualLevelData:
 
         self.previous_save_data = save
 
-        self.upload_data_to_sheet()
+        if not save.current_session_in_first_room:
+            self.upload_data_to_sheet()
+
         self.reset()
 
     def setup_sheet(self, settings) -> bool:
@@ -61,9 +63,7 @@ class CelesteIndividualLevelData:
                 "Could not find credentials.json, make sure you have the file in the same directory as the exe, and named exactly 'credentials.json'"
             )
             return False
-        sh = gc.open_by_url(
-            settings["SheetUrl"]
-        )
+        sh = gc.open_by_url(settings["SheetUrl"])
 
         self.dataSheet = sh.worksheet("Raw Data")
         return True

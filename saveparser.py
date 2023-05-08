@@ -57,6 +57,9 @@ class CelesteSaveData:
             self.current_session_heart = (
                 save_file.find("CurrentSession").get("HeartGem") == "true"
             )
+            self.current_session_in_first_room = (
+                save_file.find("CurrentSession").get("FirstLevel") == "true"
+            )
             self.current_session_level = save_file.find("CurrentSession").get("Level")
         except AttributeError:
             print("No current session")
