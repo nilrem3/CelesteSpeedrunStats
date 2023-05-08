@@ -1,3 +1,4 @@
+import queue
 
 LOGGING_LEVEL_PREFIXES = {
     0: "\u001b[0;34m[INFO]\u001b[0m",
@@ -5,6 +6,8 @@ LOGGING_LEVEL_PREFIXES = {
     2: "\u001b[0;31m[ERROR]\u001b[0m",
     3: "\u001b[41m\u001b[1;37m[FATAL]\u001b[0m"
 }
+
+logging_queue = queue.Queue()
 
 
 class LogMessage:

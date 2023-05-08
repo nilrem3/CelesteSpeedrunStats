@@ -3,7 +3,7 @@ import json
 import time
 import threading
 import queue
-from logging_system import LogMessage
+from logging_system import LogMessage, logging_queue
 from saveparser import CelesteSaveData
 from individualleveldata import CelesteIndividualLevelData
 
@@ -73,7 +73,6 @@ def input_loop(msg_queue):
 
 
 def main():
-    global logging_queue
 
     # check if settings exists
     settings = check_settings()
@@ -84,7 +83,7 @@ def main():
     anypercent_file_queue = queue.Queue()
     command_queue = queue.Queue()
 
-    il_run_data = CelesteIndividualLevelData(settings, logging_queue)
+    il_run_data = CelesteIndividualLevelData(settings)
 
     il_file_path = save_path_from_slot(
         settings["CelesteSaveFolder"], settings["ILSaveSlot"]
@@ -96,7 +95,7 @@ def main():
     il_file_checker.daemon = True
     il_file_checker.start()
 
-    anypercent_run_data = CelesteIndividualLevelData(settings, logging_queue)
+    anypercent_run_data = CelesteIndividualLevelData(settings)
 
     anypercent_file_path = save_path_from_slot(
         settings["CelesteSaveFolder"], settings["AnyPercentSaveSlot"]

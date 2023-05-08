@@ -2,7 +2,7 @@ import os
 import time
 import gspread
 import json
-from logging_system import LogMessage
+from logging_system import LogMessage, logging_queue
 
 import constants
 
@@ -10,8 +10,7 @@ from saveparser import CelesteSaveData
 
 
 class CelesteIndividualLevelData:
-    def __init__(self, settings, logging_queue):
-        logging_queue
+    def __init__(self, settings):
         self.previous_save_data = None
         self.reset()
         success = self.setup_sheet(settings)
