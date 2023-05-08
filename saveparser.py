@@ -11,10 +11,13 @@ class CelesteSaveData:
         self.current_session_mode = ""
         self.current_session_time = 0
         self.current_session_deaths = 0
+        self.current_session_dashes = 0
         self.current_session_berries = []
         self.current_session_cassette = False
         self.current_session_heart = False
+        self.current_session_in_first_room = False
         self.current_session_end_room = ""
+        self.current_session_golden = False
         self.current_session_level_flags = []
         self.total_chapter_times_100_ns = {x: 0 for x in constants.LEVEL_IDS}
         self.best_chapter_times_100_ns = {x: 0 for x in constants.LEVEL_IDS}
