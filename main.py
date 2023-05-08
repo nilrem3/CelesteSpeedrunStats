@@ -3,12 +3,11 @@ import json
 import time
 import threading
 import queue
-import sys
-
+from logging_system import LogLevel, log_message
 from saveparser import CelesteSaveData
-from rundata import CelesteRunData
 from individualleveldata import CelesteIndividualLevelData
-
+import settings
+import constants
 
 def check_settings():
     if os.path.isfile("./settings.json"):
@@ -21,21 +20,20 @@ def check_settings():
 
 def create_settings():
     result = input("No settings.json found, create settings file now? (y/n)")
-    if result == "y":
-        settings = {}
-        settings["CelesteSaveFolder"] = input("Path to your Celeste saves folder: ")
-        settings["ILSaveSlot"] = input("Save slot you do IL runs on: ")
-        settings["AnyPercentSaveSlot"] = input("Save slot for any% runs: ")
-        settings["SheetUrl"] = input("URL of the spreadsheet to track times in: ")
-        with open("./settings.json", "w") as f:
-            f.write(json.dumps(settings))
-            return settings
-    else:
-        print("Process will exit now.")
-        quit()
+        if result == "y":
+            new_settings = {}
+            for s in settings.SETTINGS:
+                new_settings[s.name] = s.get_from_user()
+            with open("./settings.json", "w") as f:
+                f.write(json.dumps(new_settings))
+                return new_settings
+        else:
+            print("Process will exit now.")
+            quit()
 
 
 def monitor_file_for_changes(path, interval, callback):
+    global logging_queue
     last_time = 0
     last_data = ""
     while True:
@@ -45,11 +43,14 @@ def monitor_file_for_changes(path, interval, callback):
             new_data = ""
         elif os.path.getmtime(path) > last_time:
             # file was modified since we last checked
+            if last_time != 0:
+                log_message(LogLevel.INFO, "File update detected, reading data.")
             try:
                 with open(path, "r") as f:
                     new_data = f.read()
             except PermissionError:
-                continue  # this just happens sometimes, we're not sure why, just try again next interval
+                log_message(LogLevel.ERROR, "Failed to read file {path}, insufficient permission.".format(path))
+                continue # this just happens sometimes, we're not sure why, just try again next interval
         if new_data != last_data:
             callback(new_data)
             last_data = new_data
@@ -73,8 +74,16 @@ def input_loop(msg_queue):
 
 
 def main():
+
     # check if settings exists
     settings = check_settings()
+
+    if not settings["ILSaveSlot"] in constants.VANILLA_SAVE_SLOTS:
+        log_message(LogLevel.WARN, f"IL Save Slot (slot {settings['ILSaveSlot']}) is only accessible in Everest.")
+    if not settings["AnyPercentSaveSlot"] in constants.VANILLA_SAVE_SLOTS:
+        log_message(LogLevel.WARN, f"Any% Save Slot (slot {settings['AnyPercentSaveSlot']}) is only accessible in Everest.")
+
+    current_log_level = 0
 
     il_file_queue = queue.Queue()
     anypercent_file_queue = queue.Queue()
@@ -91,6 +100,7 @@ def main():
     )
     il_file_checker.daemon = True
     il_file_checker.start()
+    log_message(LogLevel.OK, "Started IL Thread")
 
     anypercent_run_data = CelesteIndividualLevelData(settings)
 
@@ -103,11 +113,13 @@ def main():
     )
     anypercent_file_checker.daemon = True
     anypercent_file_checker.start()
+    log_message(LogLevel.OK, "Started Any% Thread")
 
     command_queue = queue.Queue()
     command_reader = threading.Thread(target=input_loop, args=(command_queue,))
     command_reader.daemon = True
     command_reader.start()
+    log_message(LogLevel.OK, "Started Command Thread")
 
     while True:
         try:
@@ -115,12 +127,16 @@ def main():
             il_run_data.update_from_xml(new_il_save)
         except queue.Empty:
             pass
-        try:
-            command = command_queue.get_nowait()
-            if command == "quit":
-                quit()
-        except queue.Empty:
-            pass
+
+        while not command_queue.empty():
+            try:
+                command = command_queue.get_nowait()
+                if command == "quit":
+                    quit()
+                elif command == "help":
+                    print(constants.HELP_MESSAGE)
+            except queue.Empty:
+                break
         time.sleep(0.1)
 
 
