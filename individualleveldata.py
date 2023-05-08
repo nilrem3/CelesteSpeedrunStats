@@ -27,7 +27,8 @@ class CelesteIndividualLevelData:
         self.berries = []
         self.cassette = False
         self.heart = False
-        self.level = ""
+        self.end_room = ""
+        self.golden = False
         self.completed_run = False
 
     def update_from_xml(self, xml):
@@ -40,13 +41,15 @@ class CelesteIndividualLevelData:
             self.previous_save_data = save
             return
 
-        if self.level == constants.FINAL_ROOM_BY_LEVEL_ID[self.level_id]:
+        if self.end_room == constants.FINAL_ROOM_BY_LEVEL_ID[self.level_id]:
             # If we saved while in the last room we completed the run
             print("Run completed with a time of {}".format(self.run_time))
             self.completed_run = True
         else:
             # Else the run was reset before completing
-            print("Run reset in room {} at time {}".format(self.level, self.run_time))
+            print(
+                "Run reset in room {} at time {}".format(self.end_room, self.run_time)
+            )
             self.completed_run = False
 
         self.previous_save_data = save
@@ -67,7 +70,8 @@ class CelesteIndividualLevelData:
                 len(self.berries),
                 self.cassette,
                 self.heart,
-                self.level,
+                self.end_room,
+                self.golden,
                 self.completed_run,
             ],
             index=4,
@@ -107,4 +111,5 @@ class CelesteIndividualLevelData:
         self.berries = save.current_session_berries
         self.cassette = save.current_session_cassette
         self.heart = save.current_session_heart
-        self.level = save.current_session_level
+        self.golden = save.current_session_golden
+        self.end_room = save.current_session_end_room

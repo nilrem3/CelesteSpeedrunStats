@@ -14,7 +14,7 @@ class CelesteSaveData:
         self.current_session_berries = []
         self.current_session_cassette = False
         self.current_session_heart = False
-        self.current_session_level = ""
+        self.current_session_end_room = ""
         self.current_session_level_flags = []
         self.total_chapter_times_100_ns = {x: 0 for x in constants.LEVEL_IDS}
         self.best_chapter_times_100_ns = {x: 0 for x in constants.LEVEL_IDS}
@@ -65,7 +65,12 @@ class CelesteSaveData:
             self.current_session_in_first_room = (
                 save_file.find("CurrentSession").get("FirstLevel") == "true"
             )
-            self.current_session_level = save_file.find("CurrentSession").get("Level")
+            self.current_session_end_room = save_file.find("CurrentSession").get(
+                "Level"
+            )
+            self.current_session_golden = (
+                save_file.find("CurrentSession").get("GrabbedGolden") == "true"
+            )
         except AttributeError:
             print("No current session")
 
