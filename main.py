@@ -15,7 +15,11 @@ def check_settings():
         with open("./settings.json", "r") as f:
             return json.loads(f.read())
     else:
-        result = input("No settings.json found, create settings file now? (y/n)")
+        create_settings()
+
+
+def create_settings():
+    result = input("No settings.json found, create settings file now? (y/n)")
         if result == "y":
             new_settings = {}
             for s in settings.SETTINGS:

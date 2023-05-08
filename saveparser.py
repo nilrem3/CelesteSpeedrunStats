@@ -11,10 +11,13 @@ class CelesteSaveData:
         self.current_session_mode = ""
         self.current_session_time = 0
         self.current_session_deaths = 0
+        self.current_session_dashes = 0
         self.current_session_berries = []
         self.current_session_cassette = False
         self.current_session_heart = False
-        self.current_session_level = ""
+        self.current_session_in_first_room = False
+        self.current_session_end_room = ""
+        self.current_session_golden = False
         self.current_session_level_flags = []
         self.total_chapter_times_100_ns = {x: 0 for x in constants.LEVEL_IDS}
         self.best_chapter_times_100_ns = {x: 0 for x in constants.LEVEL_IDS}
@@ -48,8 +51,13 @@ class CelesteSaveData:
             self.current_session_deaths = int(
                 save_file.find("CurrentSession").get("Deaths")
             )
-            self.current_session_berries = save_file.find("CurrentSession").findall(
-                "Strawberries"
+            self.current_session_dashes = int(
+                save_file.find("CurrentSession").get("Dashes")
+            )
+            self.current_session_berries = (
+                save_file.find("CurrentSession")
+                .find("Strawberries")
+                .findall("EntityID")
             )
             self.current_session_cassette = (
                 save_file.find("CurrentSession").get("Cassette") == "true"
@@ -57,7 +65,15 @@ class CelesteSaveData:
             self.current_session_heart = (
                 save_file.find("CurrentSession").get("HeartGem") == "true"
             )
-            self.current_session_level = save_file.find("CurrentSession").get("Level")
+            self.current_session_in_first_room = (
+                save_file.find("CurrentSession").get("FirstLevel") == "true"
+            )
+            self.current_session_end_room = save_file.find("CurrentSession").get(
+                "Level"
+            )
+            self.current_session_golden = (
+                save_file.find("CurrentSession").get("GrabbedGolden") == "true"
+            )
         except AttributeError:
             log_message(LogLevel.INFO, "No current session")
 
