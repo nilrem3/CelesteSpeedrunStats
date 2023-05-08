@@ -20,16 +20,16 @@ def check_settings():
 
 def create_settings():
     result = input("No settings.json found, create settings file now? (y/n)")
-        if result == "y":
-            new_settings = {}
-            for s in settings.SETTINGS:
-                new_settings[s.name] = s.get_from_user()
-            with open("./settings.json", "w") as f:
-                f.write(json.dumps(new_settings))
-                return new_settings
-        else:
-            print("Process will exit now.")
-            quit()
+    if result == "y":
+        new_settings = {}
+        for s in settings.SETTINGS:
+            new_settings[s.name] = s.get_from_user()
+        with open("./settings.json", "w") as f:
+            f.write(json.dumps(new_settings))
+            return new_settings
+    else:
+        print("Process will exit now.")
+        quit()
 
 
 def monitor_file_for_changes(path, interval, callback):
@@ -131,10 +131,19 @@ def main():
         while not command_queue.empty():
             try:
                 command = command_queue.get_nowait()
+                words = command.split(" ")
                 if command == "quit":
                     quit()
                 elif command == "help":
                     print(constants.HELP_MESSAGE)
+                elif command == "help advanced":
+                    print(constants.ADVANCED_HELP_MESSAGE)
+                elif words[0] == "setloglevel":
+                    if len(words) > 1:
+                        try:
+                            LogLevel.current = int(words[1])
+                        except:
+                            log_message(LogLevel.ERROR, f"{words[1]} is not a valid loglevel.  Choose a number between 0 and 4 (inclusive).")
             except queue.Empty:
                 break
         time.sleep(0.1)

@@ -12,6 +12,8 @@ class LogLevel:
     WARN = 2
     ERROR = 3
     FATAL = 4
+    current = 0
 
 def log_message(log_level, msg):
-    print(LOGGING_LEVEL_PREFIXES[log_level] + " " + msg)
+    if log_level >= LogLevel.current:
+        print(LOGGING_LEVEL_PREFIXES[log_level] + " " + msg)
