@@ -6,6 +6,7 @@ import queue
 from logging_system import LogLevel, log_message
 from saveparser import CelesteSaveData
 from individualleveldata import CelesteIndividualLevelData
+import settings
 
 def check_settings():
     if os.path.isfile("./settings.json"):
@@ -15,14 +16,12 @@ def check_settings():
     else:
         result = input("No settings.json found, create settings file now? (y/n)")
         if result == "y":
-            settings = {}
-            settings["CelesteSaveFolder"] = input("Path to your Celeste saves folder: ")
-            settings["ILSaveSlot"] = input("Save slot you do IL runs on: ")
-            settings["AnyPercentSaveSlot"] = input("Save slot for any% runs: ")
-            settings["SheetUrl"] = input("URL of the spreadsheet to track times in: ")
+            new_settings = {}
+            for s in settings.SETTINGS:
+                new_settings[s.name] = s.get_from_user()
             with open("./settings.json", "w") as f:
-                f.write(json.dumps(settings))
-                return settings
+                f.write(json.dumps(new_settings))
+                return new_settings
         else:
             print("Process will exit now.")
             quit()
