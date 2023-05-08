@@ -75,7 +75,7 @@ class CelesteIndividualLevelData:
                 self.end_room,
                 self.completed_run,
             ],
-            index=4,
+            index=2,
             value_input_option="USER_ENTERED",
         )
 
