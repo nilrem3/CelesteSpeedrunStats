@@ -48,8 +48,10 @@ class CelesteSaveData:
             self.current_session_deaths = int(
                 save_file.find("CurrentSession").get("Deaths")
             )
-            self.current_session_berries = save_file.find("CurrentSession").findall(
-                "Strawberries"
+            self.current_session_berries = (
+                save_file.find("CurrentSession")
+                .find("Strawberries")
+                .findall("EntityID")
             )
             self.current_session_cassette = (
                 save_file.find("CurrentSession").get("Cassette") == "true"
