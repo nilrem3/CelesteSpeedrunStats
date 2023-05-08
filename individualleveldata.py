@@ -42,7 +42,7 @@ class CelesteIndividualLevelData:
         if self.previous_save_data is None:
             self.previous_save_data = save
             return
-        if constants.ENDS_WITH_HEART[self.level_id] == False and  self.level == constants.FINAL_ROOM_BY_LEVEL_ID[self.level_id]:
+        if constants.ENDS_WITH_HEART[self.level_id] == False and self.end_room == constants.FINAL_ROOM_BY_LEVEL_ID[self.level_id]:
             # If we saved while in the last room of an a-side we completed the run
             print("Run completed with a time of {}".format(self.run_time))
             self.completed_run = True
@@ -102,19 +102,6 @@ class CelesteIndividualLevelData:
             index=2,
             value_input_option="USER_ENTERED",
         )
-
-    def setup_sheet(self, settings) -> bool:
-        try:
-            gc = gspread.service_account(filename="credentials.json")
-        except OSError as e:
-            print(
-                "Could not find credentials.json, make sure you have the file in the same directory as the exe, and named exactly 'credentials.json'"
-            )
-            return False
-        sh = gc.open_by_url(settings["SheetUrl"])
-
-        self.dataSheet = sh.worksheet("Raw Data")
-        return True
 
     def update_data_from_save(self, save):
         has_sides = save.current_session_id in (
