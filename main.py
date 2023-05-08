@@ -16,19 +16,23 @@ def check_settings():
         with open("./settings.json", "r") as f:
             return json.loads(f.read())
     else:
-        result = input("No settings.json found, create settings file now? (y/n)")
-        if result == "y":
-            settings = {}
-            settings["CelesteSaveFolder"] = input("Path to your Celeste saves folder: ")
-            settings["ILSaveSlot"] = input("Save slot you do IL runs on: ")
-            settings["AnyPercentSaveSlot"] = input("Save slot for any% runs: ")
-            settings["SheetUrl"] = input("URL of the spreadsheet to track times in: ")
-            with open("./settings.json", "w") as f:
-                f.write(json.dumps(settings))
-                return settings
-        else:
-            print("Process will exit now.")
-            quit()
+        create_settings()
+
+
+def create_settings():
+    result = input("No settings.json found, create settings file now? (y/n)")
+    if result == "y":
+        settings = {}
+        settings["CelesteSaveFolder"] = input("Path to your Celeste saves folder: ")
+        settings["ILSaveSlot"] = input("Save slot you do IL runs on: ")
+        settings["AnyPercentSaveSlot"] = input("Save slot for any% runs: ")
+        settings["SheetUrl"] = input("URL of the spreadsheet to track times in: ")
+        with open("./settings.json", "w") as f:
+            f.write(json.dumps(settings))
+            return settings
+    else:
+        print("Process will exit now.")
+        quit()
 
 
 def monitor_file_for_changes(path, interval, callback):
@@ -45,7 +49,7 @@ def monitor_file_for_changes(path, interval, callback):
                 with open(path, "r") as f:
                     new_data = f.read()
             except PermissionError:
-                continue # this just happens sometimes, we're not sure why, just try again next interval
+                continue  # this just happens sometimes, we're not sure why, just try again next interval
         if new_data != last_data:
             callback(new_data)
             last_data = new_data
