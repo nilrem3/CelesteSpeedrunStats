@@ -23,6 +23,7 @@ class CelesteIndividualLevelData:
         self.level_id = None
         self.run_time = 0
         self.deaths = 0
+        self.dashes = 0
         self.berries = []
         self.cassette = False
         self.heart = False
@@ -55,6 +56,24 @@ class CelesteIndividualLevelData:
 
         self.reset()
 
+    def upload_data_to_sheet(self):
+        self.dataSheet.insert_row(
+            [
+                self.run_date_and_time,
+                self.level_id,
+                self.run_time,
+                self.deaths,
+                self.dashes,
+                len(self.berries),
+                self.cassette,
+                self.heart,
+                self.level,
+                self.completed_run,
+            ],
+            index=4,
+            value_input_option="USER_ENTERED",
+        )
+
     def setup_sheet(self, settings) -> bool:
         try:
             gc = gspread.service_account(filename="credentials.json")
@@ -67,23 +86,6 @@ class CelesteIndividualLevelData:
 
         self.dataSheet = sh.worksheet("Raw Data")
         return True
-
-    def upload_data_to_sheet(self):
-        self.dataSheet.insert_row(
-            [
-                self.run_date_and_time,
-                self.level_id,
-                self.run_time,
-                self.deaths,
-                len(self.berries),
-                self.cassette,
-                self.heart,
-                self.level,
-                self.completed_run,
-            ],
-            index=4,
-            value_input_option="USER_ENTERED",
-        )
 
     def update_data_from_save(self, save):
         has_sides = save.current_session_id in (
@@ -101,6 +103,7 @@ class CelesteIndividualLevelData:
         )
         self.run_time = save.current_session_time
         self.deaths = save.current_session_deaths
+        self.dashes = save.current_session_dashes
         self.berries = save.current_session_berries
         self.cassette = save.current_session_cassette
         self.heart = save.current_session_heart

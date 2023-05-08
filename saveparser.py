@@ -48,6 +48,9 @@ class CelesteSaveData:
             self.current_session_deaths = int(
                 save_file.find("CurrentSession").get("Deaths")
             )
+            self.current_session_dashes = int(
+                save_file.find("CurrentSession").get("Dashes")
+            )
             self.current_session_berries = (
                 save_file.find("CurrentSession")
                 .find("Strawberries")
