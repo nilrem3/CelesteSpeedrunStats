@@ -3,11 +3,11 @@ import json
 import time
 import threading
 import queue
-import sys
-
+from logging_system import LogMessage
 from saveparser import CelesteSaveData
-from rundata import CelesteRunData
 from individualleveldata import CelesteIndividualLevelData
+
+logging_queue = queue.Queue()
 
 
 def check_settings():
@@ -32,6 +32,7 @@ def check_settings():
 
 
 def monitor_file_for_changes(path, interval, callback):
+    global logging_queue
     last_time = 0
     last_data = ""
     while True:
@@ -41,10 +42,13 @@ def monitor_file_for_changes(path, interval, callback):
             new_data = ""
         elif os.path.getmtime(path) > last_time:
             # file was modified since we last checked
+            if last_time != 0:
+                logging_queue.put(LogMessage(0, "File update detected, reading data."))
             try:
                 with open(path, "r") as f:
                     new_data = f.read()
             except PermissionError:
+                logging_queue.put(LogMessage(2, "Failed to read file {path}, insufficient permission."))
                 continue # this just happens sometimes, we're not sure why, just try again next interval
         if new_data != last_data:
             callback(new_data)
@@ -69,14 +73,18 @@ def input_loop(msg_queue):
 
 
 def main():
+    global logging_queue
+
     # check if settings exists
     settings = check_settings()
+
+    current_log_level = 0
 
     il_file_queue = queue.Queue()
     anypercent_file_queue = queue.Queue()
     command_queue = queue.Queue()
 
-    il_run_data = CelesteIndividualLevelData(settings)
+    il_run_data = CelesteIndividualLevelData(settings, logging_queue)
 
     il_file_path = save_path_from_slot(
         settings["CelesteSaveFolder"], settings["ILSaveSlot"]
@@ -88,7 +96,7 @@ def main():
     il_file_checker.daemon = True
     il_file_checker.start()
 
-    anypercent_run_data = CelesteIndividualLevelData(settings)
+    anypercent_run_data = CelesteIndividualLevelData(settings, logging_queue)
 
     anypercent_file_path = save_path_from_slot(
         settings["CelesteSaveFolder"], settings["AnyPercentSaveSlot"]
@@ -111,12 +119,24 @@ def main():
             il_run_data.update_from_xml(new_il_save)
         except queue.Empty:
             pass
-        try:
-            command = command_queue.get_nowait()
-            if command == "quit":
-                quit()
-        except queue.Empty:
-            pass
+
+        while not command_queue.empty():
+            try:
+                command = command_queue.get_nowait()
+                if command == "quit":
+                    quit()
+            except queue.Empty:
+                break
+
+        while not logging_queue.empty():
+            try:
+                log_msg = logging_queue.get_nowait()
+                if True: # log_msg.loglevel >= current_log_level:
+                    print(log_msg.get_display_text())
+                    if log_msg.loglevel == 3: # fatal error
+                        quit()
+            except queue.Empty:
+                break
         time.sleep(0.1)
 
 

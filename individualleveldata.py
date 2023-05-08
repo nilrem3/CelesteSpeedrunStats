@@ -2,6 +2,7 @@ import os
 import time
 import gspread
 import json
+from logging_system import LogMessage
 
 import constants
 
@@ -9,13 +10,13 @@ from saveparser import CelesteSaveData
 
 
 class CelesteIndividualLevelData:
-    def __init__(self, settings):
+    def __init__(self, settings, logging_queue):
+        logging_queue
         self.previous_save_data = None
         self.reset()
         success = self.setup_sheet(settings)
         if not success:
-            print("Program will exit now.")
-            quit()
+            logging_queue.put(LogMessage(3, "Failed to connect to google sheet."))
 
     # Reset all run data to empty
     def reset(self):
@@ -61,11 +62,17 @@ class CelesteIndividualLevelData:
                 "Could not find credentials.json, make sure you have the file in the same directory as the exe, and named exactly 'credentials.json'"
             )
             return False
-        sh = gc.open_by_url(
-            settings["SheetUrl"]
-        )
+        try:
+            sh = gc.open_by_url(
+                settings["SheetUrl"]
+            )
+        except gspread.exceptions.APIError:
+            return False
 
-        self.dataSheet = sh.worksheet("Raw Data")
+        try:
+            self.dataSheet = sh.worksheet("Raw Data")
+        except gspread.WorksheetNotFound:
+            return False
         return True
 
     def upload_data_to_sheet(self):
