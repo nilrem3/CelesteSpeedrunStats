@@ -41,9 +41,11 @@ class CelesteIndividualLevelData:
         if self.previous_save_data is None:
             self.previous_save_data = save
             return
-
-        if self.end_room == constants.FINAL_ROOM_BY_LEVEL_ID[self.level_id]:
-            # If we saved while in the last room we completed the run
+        if constants.ENDS_WITH_HEART[self.level_id] == False and  self.level == constants.FINAL_ROOM_BY_LEVEL_ID[self.level_id]:
+            # If we saved while in the last room of an a-side we completed the run
+            print("Run completed with a time of {}".format(self.run_time))
+            self.completed_run = True
+        elif constants.ENDS_WITH_HEART[self.level_id] and self.heart:
             print("Run completed with a time of {}".format(self.run_time))
             self.completed_run = True
         else:
