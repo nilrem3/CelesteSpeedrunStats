@@ -1,5 +1,5 @@
 import os
-import time
+from datetime import datetime
 import gspread
 import json
 
@@ -19,7 +19,7 @@ class CelesteIndividualLevelData:
 
     # Reset all run data to empty
     def reset(self):
-        self.run_date_and_time = time.time()
+        self.run_date_and_time = None
         self.level_id = None
         self.run_time = 0
         self.deaths = 0
@@ -35,6 +35,7 @@ class CelesteIndividualLevelData:
         save = CelesteSaveData(xml)
 
         self.update_data_from_save(save)
+        self.run_date_and_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
 
         # If there is no previous data this is the first time updating the file, return early
         if self.previous_save_data is None:
@@ -64,14 +65,14 @@ class CelesteIndividualLevelData:
             [
                 self.run_date_and_time,
                 self.level_id,
-                self.run_time,
+                self.run_time / 36000000000 / 24,
                 self.deaths,
                 self.dashes,
                 len(self.berries),
                 self.cassette,
                 self.heart,
-                self.end_room,
                 self.golden,
+                self.end_room,
                 self.completed_run,
             ],
             index=4,
