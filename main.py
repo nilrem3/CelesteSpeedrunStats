@@ -13,23 +13,19 @@ def check_settings():
     if os.path.isfile("./settings.json"):
         # settings file exists
         with open("./settings.json", "r") as f:
-            return json.loads(f.read())
+            return fill_in_missing_settings(json.loads(f.read()))
     else:
-        create_settings()
+        return fill_in_missing_settings({})
 
 
-def create_settings():
-    result = input("No settings.json found, create settings file now? (y/n)")
-    if result == "y":
-        new_settings = {}
-        for s in settings.SETTINGS:
-            new_settings[s.name] = s.get_from_user()
-        with open("./settings.json", "w") as f:
-            f.write(json.dumps(new_settings))
-            return new_settings
-    else:
-        print("Process will exit now.")
-        quit()
+def fill_in_missing_settings(settings_object):
+    for s in settings.SETTINGS:
+        if not s.name in settings_object:
+            print(f"Setting {s.name} not found.")
+            settings_object[s.name] = s.get_from_user()
+    with open("./settings.json", "w") as f:
+        f.write(json.dumps(settings_object))
+        return settings_object
 
 
 def monitor_file_for_changes(path, interval, callback):
@@ -100,7 +96,7 @@ def main():
     )
     il_file_checker.daemon = True
     il_file_checker.start()
-    log_message(LogLevel.OK, "Started IL Thread")
+    log_message(LogLevel.OK, f"Started IL Thread on slot {settings['ILSaveSlot']}")
 
     anypercent_run_data = CelesteIndividualLevelData(settings)
 
@@ -113,7 +109,7 @@ def main():
     )
     anypercent_file_checker.daemon = True
     anypercent_file_checker.start()
-    log_message(LogLevel.OK, "Started Any% Thread")
+    log_message(LogLevel.OK, f"Started Any% Thread on slot {settings['AnyPercentSaveSlot']}")
 
     command_queue = queue.Queue()
     command_reader = threading.Thread(target=input_loop, args=(command_queue,))
