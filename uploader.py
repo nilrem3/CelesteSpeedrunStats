@@ -63,6 +63,7 @@ class ILDataUploader:
         self.datasheet.insert_row(
             [
                 data.run_date_and_time,
+                "CATEGORY PLACEHOLDER",
                 data.level_id,
                 data.run_time / 36000000000 / 24,
                 data.deaths,
@@ -72,8 +73,8 @@ class ILDataUploader:
                 data.heart,
                 data.golden,
                 data.end_room,
-                data.completed_run,
                 "PLACEHOLDER", # placeholder, deaths in first room
+                data.completed_run,
                 is_pb,
                 is_practice
             ],
