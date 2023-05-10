@@ -44,16 +44,14 @@ class CelesteIndividualLevelData:
             return
         if constants.ENDS_WITH_HEART[self.level_id] == False and self.end_room == constants.FINAL_ROOM_BY_LEVEL_ID[self.level_id]:
             # If we saved while in the last room of an a-side we completed the run
-            print("Run completed with a time of {}".format(self.run_time))
+            log_message(LogLevel.INFO, "Run completed with a time of {}".format(self.run_time))
             self.completed_run = True
         elif constants.ENDS_WITH_HEART[self.level_id] and self.heart:
-            print("Run completed with a time of {}".format(self.run_time))
+            log_message(LogLevel.INFO, "Run completed with a time of {}".format(self.run_time))
             self.completed_run = True
         else:
             # Else the run was reset before completing
-            print(
-                "Run reset in room {} at time {}".format(self.end_room, self.run_time)
-            )
+            log_message(LogLevel.INFO, "Run reset in room {} at time {}".format(self.end_room, self.run_time))
             self.completed_run = False
 
         self.previous_save_data = save
@@ -78,7 +76,7 @@ class CelesteIndividualLevelData:
 
         try:
             self.dataSheet = sh.worksheet("Raw Data")
-        except gspread.WorksheetNotFound:
+        except gspread.exceptions.APIError:
             log_message(LogLevel.ERROR, "No Worksheet 'Raw Data' Found.")
             return False
         return True
