@@ -18,6 +18,35 @@ SIDE_CODE_BY_ID = {0: "a", 1: "b", 2: "c"}
 
 SIDE_CODE_BY_MODE = {"Normal": "a", "BSide": "b", "CSide": "c"}
 
+ENDS_WITH_HEART = {
+    "prologue": False,
+    "1a": False,
+    "1b": True,
+    "1c": True,
+    "2a": False,
+    "2b": True,
+    "2c": True,
+    "3a": False,
+    "3b": True,
+    "3c": True,
+    "4a": False,
+    "4b": True,
+    "4c": True,
+    "5a": False,
+    "5b": True,
+    "5c": True,
+    "6a": False,
+    "6b": True,
+    "6c": True,
+    "7a": False,
+    "7b": True,
+    "7c": True,
+    "epilogue": False,
+    "8a": False,
+    "8b": True,
+    "8c": True,
+    "9": False
+}
 
 # UNFINISHED
 FINAL_ROOM_BY_LEVEL_ID = {
@@ -317,3 +346,20 @@ LEVEL_IDS = [
     "8c",
     "9",
 ]
+
+HELP_MESSAGE = """
+help: displays this message
+help advanced: display help message for advanced commands.
+quit: closes the program
+threshold [deaths|time] <n>
+    deaths: set the death threshold to n.  Any run with more than n deaths will be marked as a practice run.
+    time: set the time threshold to n.  Any run that took longer than n seconds will be marked as a practice run.
+"""
+
+ADVANCED_HELP_MESSAGE = """
+===ADVANCED MODE===
+these commands shouldn't be necessary to use this program, but advanced users may find them helpful in certain cases.
+setloglevel <n>: sets the verbosity of the logging system.  0 is the most verbose, 4 is the least.
+"""
+
+VANILLA_SAVE_SLOTS = ["0", "1", "2", "debug"]

@@ -1,5 +1,5 @@
 import xml.etree.ElementTree as ET
-
+from logging_system import log_message, LogLevel
 import constants
 
 
@@ -75,7 +75,7 @@ class CelesteSaveData:
                 save_file.find("CurrentSession").get("GrabbedGolden") == "true"
             )
         except AttributeError:
-            print("No current session")
+            log_message(LogLevel.INFO, "No current session")
 
         areas_data = save_file.find("Areas")
 
