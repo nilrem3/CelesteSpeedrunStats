@@ -142,45 +142,35 @@ def main():
         while not command_queue.empty():
             try:
                 command = command_queue.get_nowait()
-                words = command.split(" ")
-                if command == "quit":
-                    quit()
-                elif command == "help":
-                    print(constants.HELP_MESSAGE)
-                elif command == "help advanced":
-                    print(constants.ADVANCED_HELP_MESSAGE)
-                elif words[0] == "setloglevel":
-                    if len(words) > 1:
+                match command.split():
+                    case ["quit"]:
+                        quit()
+                    case ["help", "advanced"]:
+                        print(constants.ADVANCED_HELP_MESSAGE)
+                    case ["help"]:
+                        print(constants.HELP_MESSAGE)
+                    case ["setloglevel", level]:
                         try:
-                            LogLevel.current = int(words[1])
-                        except:
-                            log_message(LogLevel.ERROR, f"{words[1]} is not a valid loglevel.  Choose a number between 0 and 4 (inclusive).")
-                elif words[0] == "threshold":
-                    if len(words) < 3:
-                        log_message(LogLevel.ERROR, "Incorrect arguments provided.  see 'help' command for more information.")
-                    if words[1] == "deaths":
-                        try:
-                            il_uploader.death_threshold = int(words[2])
+                            LogLevel.current = int(level)
                         except ValueError:
-                            log_message(LogLevel.ERROR, f"{words[2]} is not a valid number.")
-                    elif words[1] == "time":
+                            log_message(LogLevel.ERROR, f"{level} is not a valid loglevel. Choose a number between 0 and 4 (inclusive).")
+                    case ["threshold", "deaths", num]:
                         try:
-                            il_uploader.time_threshold = int(words[2])
+                            il_uploader.death_threshold = int(num)
                         except ValueError:
-                            log_message(LogLevel.ERROR, f"{words[2]} is not a valid number.")
-                elif words[0] == "tag":
-                    if len(words) < 2:
-                        log_message(LogLevel.ERROR, "Incorrect arguments provided.  see 'help' command for more information.")
-                    elif words[1] == "add":
-                        if len(words) < 3:
-                            log_message(LogLevel.ERROR, "Please provide a tag to add.")
-                        for tag in words[2:]:
+                            log_message(LogLevel.ERROR, f"{num} is not a valid number.")
+                    case ["threshold", "time", num]:
+                        try:
+                            il_upleader.time_threshold = int(num)
+                        except ValueError:
+                            log_message(LogLevel.ERROR, f"{num} is not a valid number")
+                    case ["tag", "add", *tags]:
+                        for tag in " ".join(tags).split(", "):
                             if tag not in il_uploader.tags:
                                 il_uploader.tags.append(tag)
-                        log_message(LogLevel.OK, f"Added tag(s) to tags list.")
-                    elif words[1] == "list":
+                    case ["tag", "list"]:
                         print("Current tags: " + ", ".join(il_uploader.tags))
-                    elif words[1] == "clear":
+                    case ["tag", "clear"]:
                         il_uploader.tags = []
                         log_message(LogLevel.OK, "Tags Cleared")
             except queue.Empty:
