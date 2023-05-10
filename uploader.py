@@ -8,6 +8,7 @@ class ILDataUploader:
         self.datasheet = None
         self.death_threshold = None
         self.time_threshold = None
+        self.tags = []
 
     def setup_sheet(self, settings) -> bool:
         try:
@@ -76,7 +77,8 @@ class ILDataUploader:
                 data.first_room_deaths,
                 data.completed_run,
                 is_pb,
-                is_practice
+                is_practice,
+                ", ".join(self.tags)
             ],
             index=2,
             value_input_option="USER_ENTERED"
