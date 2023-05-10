@@ -349,7 +349,17 @@ LEVEL_IDS = [
 
 HELP_MESSAGE = """
 help: displays this message
+help advanced: display help message for advanced commands.
 quit: closes the program
+threshold [deaths|time] <n>
+    deaths: set the death threshold to n.  Any run with more than n deaths will be marked as a practice run.
+    time: set the time threshold to n.  Any run that took longer than n seconds will be marked as a practice run.
+"""
+
+ADVANCED_HELP_MESSAGE = """
+===ADVANCED MODE===
+these commands shouldn't be necessary to use this program, but advanced users may find them helpful in certain cases.
+setloglevel <n>: sets the verbosity of the logging system.  0 is the most verbose, 4 is the least.
 """
 
 VANILLA_SAVE_SLOTS = ["0", "1", "2", "debug"]

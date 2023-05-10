@@ -8,28 +8,26 @@ from saveparser import CelesteSaveData
 from individualleveldata import CelesteIndividualLevelData
 import settings
 import constants
+import uploader
+
 
 def check_settings():
     if os.path.isfile("./settings.json"):
         # settings file exists
         with open("./settings.json", "r") as f:
-            return json.loads(f.read())
+            return fill_in_missing_settings(json.loads(f.read()))
     else:
-        create_settings()
+        return fill_in_missing_settings({})
 
 
-def create_settings():
-    result = input("No settings.json found, create settings file now? (y/n)")
-    if result == "y":
-        new_settings = {}
-        for s in settings.SETTINGS:
-            new_settings[s.name] = s.get_from_user()
-        with open("./settings.json", "w") as f:
-            f.write(json.dumps(new_settings))
-            return new_settings
-    else:
-        print("Process will exit now.")
-        quit()
+def fill_in_missing_settings(settings_object):
+    for s in settings.SETTINGS:
+        if not s.name in settings_object:
+            print(f"Setting {s.name} not found.")
+            settings_object[s.name] = s.get_from_user()
+    with open("./settings.json", "w") as f:
+        f.write(json.dumps(settings_object))
+        return settings_object
 
 
 def monitor_file_for_changes(path, interval, callback):
@@ -49,7 +47,7 @@ def monitor_file_for_changes(path, interval, callback):
                 with open(path, "r") as f:
                     new_data = f.read()
             except PermissionError:
-                log_message(LogLevel.ERROR, "Failed to read file {path}, insufficient permission.".format(path))
+                log_message(LogLevel.ERROR, f"Failed to read file {path}, insufficient permission.".format(path))
                 continue # this just happens sometimes, we're not sure why, just try again next interval
         if new_data != last_data:
             callback(new_data)
@@ -100,7 +98,7 @@ def main():
     )
     il_file_checker.daemon = True
     il_file_checker.start()
-    log_message(LogLevel.OK, "Started IL Thread")
+    log_message(LogLevel.OK, f"Started IL Thread on slot {settings['ILSaveSlot']}")
 
     anypercent_run_data = CelesteIndividualLevelData(settings)
 
@@ -113,7 +111,7 @@ def main():
     )
     anypercent_file_checker.daemon = True
     anypercent_file_checker.start()
-    log_message(LogLevel.OK, "Started Any% Thread")
+    log_message(LogLevel.OK, f"Started Any% Thread on slot {settings['AnyPercentSaveSlot']}")
 
     command_queue = queue.Queue()
     command_reader = threading.Thread(target=input_loop, args=(command_queue,))
@@ -121,20 +119,55 @@ def main():
     command_reader.start()
     log_message(LogLevel.OK, "Started Command Thread")
 
+    il_uploader = uploader.ILDataUploader()
+    success = il_uploader.setup_sheet(settings)
+    if not success:
+        log_message(LogLevel.FATAL, "Failed to set up Google Sheet.")
+        quit()
+    else:
+        log_message(LogLevel.OK, "Connected to google sheet.")
+
     while True:
         try:
             new_il_save = il_file_queue.get_nowait()
             il_run_data.update_from_xml(new_il_save)
+
+            if il_run_data.ready_to_upload:
+                il_uploader.upload_run_to_sheet(il_run_data)
+                il_run_data.reset()
+
         except queue.Empty:
             pass
 
         while not command_queue.empty():
             try:
                 command = command_queue.get_nowait()
+                words = command.split(" ")
                 if command == "quit":
                     quit()
                 elif command == "help":
                     print(constants.HELP_MESSAGE)
+                elif command == "help advanced":
+                    print(constants.ADVANCED_HELP_MESSAGE)
+                elif words[0] == "setloglevel":
+                    if len(words) > 1:
+                        try:
+                            LogLevel.current = int(words[1])
+                        except:
+                            log_message(LogLevel.ERROR, f"{words[1]} is not a valid loglevel.  Choose a number between 0 and 4 (inclusive).")
+                elif words[0] == "threshold":
+                    if len(words) < 3:
+                        log_message(LogLevel.ERROR, "Incorrect arguments provided.  see 'help' command for more information.")
+                    if words[1] == "deaths":
+                        try:
+                            il_uploader.death_threshold = int(words[2])
+                        except ValueError:
+                            log_message(LogLevel.ERROR, f"{words[2]} is not a valid number.")
+                    elif words[1] == "time":
+                        try:
+                            il_uploader.time_threshold = int(words[2])
+                        except ValueError:
+                            log_message(LogLevel.ERROR, f"{words[2]} is not a valid number.")
             except queue.Empty:
                 break
         time.sleep(0.1)
