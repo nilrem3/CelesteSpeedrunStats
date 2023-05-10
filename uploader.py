@@ -46,9 +46,9 @@ class ILDataUploader:
         if is_practice:
             log_message(LogLevel.INFO, "Run marked as practice.")
 
-        level_ids = self.datasheet.col_values(2)
-        times = self.datasheet.col_values(3, value_render_option="UNFORMATTED_VALUE")
-        completions = self.datasheet.col_values(12)
+        level_ids = self.datasheet.col_values(3)
+        times = self.datasheet.col_values(4, value_render_option="UNFORMATTED_VALUE")
+        completions = self.datasheet.col_values(13)
         
         is_pb = False
         best_time = None 
