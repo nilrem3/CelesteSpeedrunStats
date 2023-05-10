@@ -8,6 +8,8 @@ from saveparser import CelesteSaveData
 from individualleveldata import CelesteIndividualLevelData
 import settings
 import constants
+import uploader
+
 
 def check_settings():
     if os.path.isfile("./settings.json"):
@@ -117,10 +119,23 @@ def main():
     command_reader.start()
     log_message(LogLevel.OK, "Started Command Thread")
 
+    il_uploader = uploader.ILDataUploader()
+    success = il_uploader.setup_sheet(settings)
+    if not success:
+        log_message(LogLevel.FATAL, "Failed to set up Google Sheet.")
+        quit()
+    else:
+        log_message(LogLevel.OK, "Connected to google sheet.")
+
     while True:
         try:
             new_il_save = il_file_queue.get_nowait()
             il_run_data.update_from_xml(new_il_save)
+
+            if il_run_data.ready_to_upload:
+                il_uploader.upload_run_to_sheet(il_run_data)
+                il_run_data.reset()
+
         except queue.Empty:
             pass
 
