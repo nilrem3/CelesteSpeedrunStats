@@ -47,7 +47,7 @@ def monitor_file_for_changes(path, interval, callback):
                 with open(path, "r") as f:
                     new_data = f.read()
             except PermissionError:
-                log_message(LogLevel.ERROR, "Failed to read file {path}, insufficient permission.".format(path))
+                log_message(LogLevel.ERROR, f"Failed to read file {path}, insufficient permission.".format(path))
                 continue # this just happens sometimes, we're not sure why, just try again next interval
         if new_data != last_data:
             callback(new_data)
@@ -155,6 +155,19 @@ def main():
                             LogLevel.current = int(words[1])
                         except:
                             log_message(LogLevel.ERROR, f"{words[1]} is not a valid loglevel.  Choose a number between 0 and 4 (inclusive).")
+                elif words[0] == "threshold":
+                    if len(words) < 3:
+                        log_message(LogLevel.ERROR, "Incorrect arguments provided.  see 'help' command for more information.")
+                    if words[1] == "deaths":
+                        try:
+                            il_uploader.death_threshold = int(words[2])
+                        except ValueError:
+                            log_message(LogLevel.ERROR, f"{words[2]} is not a valid number.")
+                    elif words[1] == "time":
+                        try:
+                            il_uploader.time_threshold = int(words[2])
+                        except ValueError:
+                            log_message(LogLevel.ERROR, f"{words[2]} is not a valid number.")
             except queue.Empty:
                 break
         time.sleep(0.1)

@@ -32,18 +32,18 @@ class ILDataUploader:
 
     def upload_run_to_sheet(self, data: CelesteIndividualLevelData):
 
-        if data.current_session_in_first_room:
-            return
-
         is_practice = False
 
         if self.death_threshold is not None:
-            if data.deaths >= self.death_threshold:
+            if data.deaths > self.death_threshold:
                 is_practice = True
 
         if self.time_threshold is not None:
             if data.run_time / 36000000000 / 24 > self.time_threshold:
                 is_practice = True
+
+        if is_practice:
+            log_message(LogLevel.INFO, "Run marked as practice.")
 
         self.datasheet.insert_row(
             [
