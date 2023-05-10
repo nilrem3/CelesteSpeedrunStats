@@ -73,7 +73,7 @@ class ILDataUploader:
                 data.heart,
                 data.golden,
                 data.end_room,
-                "PLACEHOLDER", # placeholder, deaths in first room
+                data.first_room_deaths,
                 data.completed_run,
                 is_pb,
                 is_practice
