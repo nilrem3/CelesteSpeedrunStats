@@ -55,7 +55,7 @@ class CelesteIndividualLevelData:
 
         self.previous_save_data = save
 
-        if not save.current_session_in_first_room:
+        if not save.current_session_in_first_room and not save.run_time == 0:
             self.upload_data_to_sheet()
 
         self.reset()
