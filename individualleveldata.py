@@ -39,8 +39,8 @@ class CelesteIndividualLevelData:
         if self.previous_save_data is None:
             self.previous_save_data = save
             self.ready_to_upload = False
-            return 
-         
+            return
+
         self.ready_to_upload = True
         if constants.ENDS_WITH_HEART[self.level_id] == False and self.end_room == constants.FINAL_ROOM_BY_LEVEL_ID[self.level_id]:
             # If we saved while in the last room of an a-side we completed the run
@@ -55,6 +55,9 @@ class CelesteIndividualLevelData:
             self.completed_run = False  
 
         self.previous_save_data = save
+
+        if save.current_session_in_first_room:
+            self.ready_to_upload = False
 
     def update_data_from_save(self, save):
         has_sides = save.current_session_id in (
