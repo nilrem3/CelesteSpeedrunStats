@@ -32,6 +32,9 @@ class ILDataUploader:
 
     def upload_run_to_sheet(self, data: CelesteIndividualLevelData):
 
+        if data.current_session_in_first_room:
+            return
+
         is_practice = False
 
         if self.death_threshold is not None:
