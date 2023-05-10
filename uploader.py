@@ -6,6 +6,8 @@ from individualleveldata import CelesteIndividualLevelData
 class ILDataUploader:
     def __init__(self):
         self.datasheet = None
+        self.death_threshold = None
+        self.time_threshold = None
 
     def setup_sheet(self, settings) -> bool:
         try:
@@ -29,6 +31,17 @@ class ILDataUploader:
         return True
 
     def upload_run_to_sheet(self, data: CelesteIndividualLevelData):
+
+        is_practice = False
+
+        if self.death_threshold is not None:
+            if data.deaths >= self.death_threshold:
+                is_practice = True
+
+        if self.time_threshold is not None:
+            if data.run_time / 36000000000 / 24 > self.time_threshold:
+                is_practice = True
+
         self.datasheet.insert_row(
             [
                 data.run_date_and_time,
@@ -41,9 +54,9 @@ class ILDataUploader:
                 data.heart,
                 data.golden,
                 data.end_room,
-                data.completed_run
+                data.completed_run,
+                is_practice
             ],
             index=2,
             value_input_option="USER_ENTERED"
         )
-
