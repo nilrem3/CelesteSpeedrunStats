@@ -168,6 +168,21 @@ def main():
                             il_uploader.time_threshold = int(words[2])
                         except ValueError:
                             log_message(LogLevel.ERROR, f"{words[2]} is not a valid number.")
+                elif words[0] == "tag":
+                    if len(words) < 2:
+                        log_message(LogLevel.ERROR, "Incorrect arguments provided.  see 'help' command for more information.")
+                    elif words[1] == "add":
+                        if len(words) < 3:
+                            log_message(LogLevel.ERROR, "Please provide a tag to add.")
+                        for tag in words[2:]:
+                            if tag not in il_uploader.tags:
+                                il_uploader.tags.append(tag)
+                        log_message(LogLevel.OK, f"Added tag(s) to tags list.")
+                    elif words[1] == "list":
+                        print("Current tags: " + ", ".join(il_uploader.tags))
+                    elif words[1] == "clear":
+                        il_uploader.tags = []
+                        log_message(LogLevel.OK, "Tags Cleared")
             except queue.Empty:
                 break
         time.sleep(0.1)
