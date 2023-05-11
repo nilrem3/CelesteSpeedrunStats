@@ -47,8 +47,13 @@ def monitor_file_for_changes(path, interval, callback):
                 with open(path, "r") as f:
                     new_data = f.read()
             except PermissionError:
-                log_message(LogLevel.ERROR, f"Failed to read file {path}, insufficient permission.".format(path))
-                continue # this just happens sometimes, we're not sure why, just try again next interval
+                log_message(
+                    LogLevel.ERROR,
+                    f"Failed to read file {path}, insufficient permission.".format(
+                        path
+                    ),
+                )
+                continue  # this just happens sometimes, we're not sure why, just try again next interval
         if new_data != last_data:
             callback(new_data)
             last_data = new_data
@@ -72,14 +77,19 @@ def input_loop(msg_queue):
 
 
 def main():
-
     # check if settings exists
     settings = check_settings()
 
     if not settings["ILSaveSlot"] in constants.VANILLA_SAVE_SLOTS:
-        log_message(LogLevel.WARN, f"IL Save Slot (slot {settings['ILSaveSlot']}) is only accessible in Everest.")
+        log_message(
+            LogLevel.WARN,
+            f"IL Save Slot (slot {settings['ILSaveSlot']}) is only accessible in Everest.",
+        )
     if not settings["AnyPercentSaveSlot"] in constants.VANILLA_SAVE_SLOTS:
-        log_message(LogLevel.WARN, f"Any% Save Slot (slot {settings['AnyPercentSaveSlot']}) is only accessible in Everest.")
+        log_message(
+            LogLevel.WARN,
+            f"Any% Save Slot (slot {settings['AnyPercentSaveSlot']}) is only accessible in Everest.",
+        )
 
     current_log_level = 0
 
@@ -111,7 +121,9 @@ def main():
     )
     anypercent_file_checker.daemon = True
     anypercent_file_checker.start()
-    log_message(LogLevel.OK, f"Started Any% Thread on slot {settings['AnyPercentSaveSlot']}")
+    log_message(
+        LogLevel.OK, f"Started Any% Thread on slot {settings['AnyPercentSaveSlot']}"
+    )
 
     command_queue = queue.Queue()
     command_reader = threading.Thread(target=input_loop, args=(command_queue,))
@@ -143,32 +155,40 @@ def main():
         while not command_queue.empty():
             try:
                 command = command_queue.get_nowait()
-                words = command.split(" ")
-                if command == "quit":
-                    quit()
-                elif command == "help":
-                    print(constants.HELP_MESSAGE)
-                elif command == "help advanced":
-                    print(constants.ADVANCED_HELP_MESSAGE)
-                elif words[0] == "setloglevel":
-                    if len(words) > 1:
+                match command.split():
+                    case ["quit"]:
+                        quit()
+                    case ["help", "advanced"]:
+                        print(constants.ADVANCED_HELP_MESSAGE)
+                    case ["help"]:
+                        print(constants.HELP_MESSAGE)
+                    case ["setloglevel", level]:
                         try:
-                            LogLevel.current = int(words[1])
-                        except:
-                            log_message(LogLevel.ERROR, f"{words[1]} is not a valid loglevel.  Choose a number between 0 and 4 (inclusive).")
-                elif words[0] == "threshold":
-                    if len(words) < 3:
-                        log_message(LogLevel.ERROR, "Incorrect arguments provided.  see 'help' command for more information.")
-                    if words[1] == "deaths":
-                        try:
-                            il_uploader.death_threshold = int(words[2])
+                            LogLevel.current = int(level)
                         except ValueError:
-                            log_message(LogLevel.ERROR, f"{words[2]} is not a valid number.")
-                    elif words[1] == "time":
+                            log_message(
+                                LogLevel.ERROR,
+                                f"{level} is not a valid loglevel. Choose a number between 0 and 4 (inclusive).",
+                            )
+                    case ["threshold", "deaths", num]:
                         try:
-                            il_uploader.time_threshold = int(words[2])
+                            il_uploader.death_threshold = int(num)
                         except ValueError:
-                            log_message(LogLevel.ERROR, f"{words[2]} is not a valid number.")
+                            log_message(LogLevel.ERROR, f"{num} is not a valid number.")
+                    case ["threshold", "time", num]:
+                        try:
+                            il_uploader.time_threshold = int(num)
+                        except ValueError:
+                            log_message(LogLevel.ERROR, f"{num} is not a valid number")
+                    case ["tag", "add", *tags]:
+                        for tag in " ".join(tags).split(", "):
+                            if tag not in il_uploader.tags:
+                                il_uploader.tags.append(tag)
+                    case ["tag", "list"]:
+                        print("Current tags: " + ", ".join(il_uploader.tags))
+                    case ["tag", "clear"]:
+                        il_uploader.tags = []
+                        log_message(LogLevel.OK, "Tags Cleared")
             except queue.Empty:
                 break
         time.sleep(0.1)

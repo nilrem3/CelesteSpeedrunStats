@@ -14,6 +14,7 @@ class CelesteIndividualLevelData:
         self.previous_save_data = None
         self.reset()
         self.ready_to_upload = False
+        self.first_room_deaths = 0
 
     # Reset all run data to empty
     def reset(self):
@@ -42,7 +43,7 @@ class CelesteIndividualLevelData:
             return
 
         self.ready_to_upload = True
-        if constants.ENDS_WITH_HEART[self.level_id] == False and self.end_room == constants.FINAL_ROOM_BY_LEVEL_ID[self.level_id]:
+        if constants.ENDS_WITH_HEART[self.level_id] is False and self.end_room == constants.FINAL_ROOM_BY_LEVEL_ID[self.level_id]:
             # If we saved while in the last room of an a-side we completed the run
             log_message(LogLevel.INFO, "Run completed with a time of {}".format(self.run_time))
             self.completed_run = True
@@ -55,8 +56,6 @@ class CelesteIndividualLevelData:
             self.completed_run = False  
 
         self.previous_save_data = save
-        if save.current_session_in_first_room:
-            self.ready_to_upload = False
 
     def update_data_from_save(self, save):
         has_sides = save.current_session_id in (
@@ -80,3 +79,5 @@ class CelesteIndividualLevelData:
         self.heart = save.current_session_heart
         self.golden = save.current_session_golden
         self.end_room = save.current_session_end_room
+        if self.previous_save_data is not None:
+            self.first_room_deaths = (save.death_count - self.previous_save_data.death_count) - save.current_session_deaths
