@@ -56,8 +56,6 @@ class CelesteIndividualLevelData:
             self.completed_run = False  
 
         self.previous_save_data = save
-        if save.current_session_in_first_room:
-            self.ready_to_upload = False
 
     def update_data_from_save(self, save):
         has_sides = save.current_session_id in (
