@@ -51,15 +51,16 @@ class ILDataUploader:
         completions = self.datasheet.col_values(13)
         
         is_pb = False
-        best_time = None 
-        for level_id, time, completion in zip(level_ids, times, completions):
-            if level_id != data.level_id or not completion:
-                continue
-            else:
-                if best_time is None or float(time) < best_time:
-                    best_time = float(time)
-        if best_time is None or best_time > data.run_time / 36000000000 / 24:
-            is_pb = True
+        best_time = None
+        if data.completed_run:
+            for level_id, time, completion in zip(level_ids, times, completions):
+                if level_id != data.level_id or not completion:
+                    continue
+                else:
+                    if best_time is None or float(time) < best_time:
+                        best_time = float(time)
+            if best_time is None or best_time > data.run_time / 36000000000 / 24:
+                is_pb = True
 
         self.datasheet.insert_row(
             [
