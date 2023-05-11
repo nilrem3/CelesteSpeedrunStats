@@ -189,6 +189,8 @@ def main():
                     case ["tag", "clear"]:
                         il_uploader.tags = []
                         log_message(LogLevel.OK, "Tags Cleared")
+                    case ["comment", *rest]:
+                        il_uploader.add_comment(" ".join(rest))
             except queue.Empty:
                 break
         time.sleep(0.1)
