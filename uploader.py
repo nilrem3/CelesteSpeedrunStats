@@ -84,3 +84,6 @@ class ILDataUploader:
             index=2,
             value_input_option="USER_ENTERED"
         )
+
+    def add_comment(self, comment):
+        self.datasheet.update('Q2', comment)
