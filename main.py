@@ -133,6 +133,7 @@ def main():
             il_run_data.update_from_xml(new_il_save)
 
             if il_run_data.ready_to_upload:
+                log_message(LogLevel.INFO, "IL Run ready to upload.")
                 il_uploader.upload_run_to_sheet(il_run_data)
                 il_run_data.reset()
 
