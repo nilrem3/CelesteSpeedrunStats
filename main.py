@@ -191,6 +191,13 @@ def main():
                         log_message(LogLevel.OK, "Tags Cleared")
                     case ["comment", *rest]:
                         il_uploader.add_comment(" ".join(rest))
+                    case ["category", *new_cat]:
+                        new_cat = " ".join(new_cat)
+                        success = il_uploader.set_category(new_cat)
+                        if success:
+                            log_message(LogLevel.OK, f"Category changed to {new_cat}")
+                        else:
+                            log_message(LogLevel.ERROR, f"{new_cat} is not a valid category.")
             except queue.Empty:
                 break
         time.sleep(0.1)

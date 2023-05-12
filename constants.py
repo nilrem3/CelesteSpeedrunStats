@@ -358,6 +358,7 @@ tag add <tags>: add tags (a comma separated list) to the current set of tags.
     list: show the current set of tags
     clear: remove all current tags.
 comment <words>: add words as a comment on the most recent uploaded run.
+category <category>: set the current category to category.
 """
 
 ADVANCED_HELP_MESSAGE = """
