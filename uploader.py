@@ -1,6 +1,7 @@
 import gspread
 from logging_system import LogLevel, log_message
 from individualleveldata import CelesteIndividualLevelData
+import constants
 
 
 class ILDataUploader:
@@ -9,6 +10,7 @@ class ILDataUploader:
         self.death_threshold = None
         self.time_threshold = None
         self.tags = []
+        self.category = "clear"
 
     def setup_sheet(self, settings) -> bool:
         try:
@@ -87,3 +89,9 @@ class ILDataUploader:
 
     def add_comment(self, comment):
         self.datasheet.update('Q2', comment)
+
+    def set_category(self, category):
+        if category in constants.IL_CATEGORIES:
+            self.category = category
+            return True
+        return False

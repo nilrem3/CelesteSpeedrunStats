@@ -368,3 +368,4 @@ setloglevel <n>: sets the verbosity of the logging system.  0 is the most verbos
 """
 
 VANILLA_SAVE_SLOTS = ["0", "1", "2", "debug"]
+IL_CATEGORIES = ["clear", "full clear", "arb+heart", "heart+cassette", "dashless"]
