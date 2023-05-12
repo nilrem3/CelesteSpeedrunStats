@@ -65,7 +65,7 @@ class ILDataUploader:
         self.datasheet.insert_row(
             [
                 data.run_date_and_time,
-                "CATEGORY PLACEHOLDER",
+                self.category,
                 data.level_id,
                 data.run_time / 36000000000 / 24,
                 data.deaths,
