@@ -55,6 +55,8 @@ def parse_practice_command(args, il_uploader):
     match args:
         case []:
             print(constants.PRACTICE_HELP_MESSAGE)
+        case ["help"]:
+            print(constants.PRACTICE_HELP_MESSAGE)
         case ["on"]:
             il_uploader.practice_mode = "on"
             log_message(LogLevel.OK, "All runs will be marked as practice")
