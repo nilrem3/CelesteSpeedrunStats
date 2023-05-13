@@ -40,3 +40,10 @@ def parse_command(command, il_uploader):
         case ["comment", *words]:
             comment = " ".join(words)
             il_uploader.add_comment(comment)
+        case ["category", *new_cat]:
+            new_cat = " ".join(new_cat)
+            success = il_uploader.set_category(new_cat)
+            if success:
+                log_message(LogLevel.OK, f"Category changed to {new_cat}")
+            else:
+                log_message(LogLevel.ERROR, f"{new_cat} is not a valid category.")
