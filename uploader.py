@@ -6,7 +6,7 @@ import constants
 
 class ILDataUploader:
     def __init__(self):
-        self.datasheet = None
+        self.raw_data_sheet = None
         self.death_threshold = None
         self.time_threshold = None
         self.tags = []
@@ -27,9 +27,15 @@ class ILDataUploader:
             return False
 
         try:
-            self.datasheet = sh.worksheet("Raw Data")
+            self.raw_data_sheet = sh.worksheet("Raw Data")
         except gspread.exceptions.WorksheetNotFound:
             log_message(LogLevel.ERROR, "Failed to find Raw Data worksheet")
+            return False
+
+        try:
+            self.data_summary_sheet = sh.worksheet("IL Data Summary")
+        except gspread.exceptions.WorksheetNotFound:
+            log_message(LogLevel.ERROR, "Failed to find IL Data Summary worksheet")
             return False
 
         return True
@@ -40,23 +46,25 @@ class ILDataUploader:
         if is_practice:
             log_message(LogLevel.INFO, "Run marked as practice.")
 
-        level_ids = self.datasheet.col_values(3)
-        times = self.datasheet.col_values(4, value_render_option="UNFORMATTED_VALUE")
-        completions = self.datasheet.col_values(13)
+        self.check_category(data)
 
-        is_pb = False
-        best_time = None
-        if data.completed_run:
-            for level_id, time, completion in zip(level_ids, times, completions):
-                if level_id != data.level_id or not completion:
+        level_ids = self.data_summary_sheet.col_values(1)
+        categories = self.data_summary_sheet.col_values(2)
+        bests = self.data_summary_sheet.col_values(
+            3, value_render_option="UNFORMATTED_VALUE"
+        )
+
+        completed = data.get_run_completed(self.category)
+        is_pb = True
+        if completed:
+            for level_id, time, category in zip(level_ids, bests, categories):
+                if level_id != data.level_id or category != self.category:
                     continue
-                else:
-                    if best_time is None or float(time) < best_time:
-                        best_time = float(time)
-            if best_time is None or best_time > data.run_time / 36000000000 / 24:
-                is_pb = True
+                elif time < data.run_time / 36000000000 / 24:
+                    is_pb = False
+                    break
 
-        self.datasheet.insert_row(
+        self.raw_data_sheet.insert_row(
             [
                 data.run_date_and_time,
                 self.category,
@@ -70,7 +78,7 @@ class ILDataUploader:
                 data.golden,
                 data.end_room,
                 data.first_room_deaths,
-                data.completed_run,
+                completed,
                 is_pb,
                 is_practice,
                 ", ".join(self.tags),
@@ -80,7 +88,34 @@ class ILDataUploader:
         )
 
     def add_comment(self, comment):
-        self.datasheet.update("Q2", comment)
+        self.raw_data_sheet.update("Q2", comment)
+
+    def check_category(self, data):
+        if not data.get_run_finished():
+            return
+
+        if (
+            len(data.berries) < 3
+            and not data.heart
+            and not data.cassette
+            and data.dashes > 0
+        ):
+            self.category = "Clear"
+        if (
+            len(data.berries) == len(constants.RED_BERRY_IDS_BY_LEVEL[data.level_id])
+            and data.heart
+            and data.cassette
+        ):
+            self.category = "Full Clear"
+        elif (
+            len(data.berries) == len(constants.RED_BERRY_IDS_BY_LEVEL[data.level_id])
+            and data.heart
+        ):
+            self.category = "All Red Berries+Heart"
+        elif data.heart and data.cassette:
+            self.category = "Heart+Cassette"
+        elif data.dashes == 0:
+            self.category = "Dashless"
 
     def set_category(self, category):
         if category in constants.IL_CAT_STR_TO_CAT.keys():

@@ -43,7 +43,7 @@ def parse_category_command(args, il_uploader):
             categories = ", ".join(constants.IL_CATEGORIES)
             log_message(
                 LogLevel.INFO,
-                f"Individual level category options include {categories}",
+                f"Individual level category options include: {categories}",
             )
         case ["current"]:
             log_message(LogLevel.INFO, f"Current category is {il_uploader.category}")
@@ -93,14 +93,14 @@ def parse_tag_command(args, il_uploader):
             for tag in tags:
                 if tag not in il_uploader.tags:
                     il_uploader.tags.append(tag)
-            tag_str = ", ".join(il_uploader.tags)
-            log_message(LogLevel.OK, f"Added session tags: {tag_str}")
+            tag_str = ", ".join(tags)
+            log_message(LogLevel.OK, f"Added session tag(s): {tag_str}")
         case ["list"]:
             tags = ", ".join(il_uploader.tags)
             log_message(LogLevel.INFO, f"Current tags: {tags}")
         case ["clear"]:
             il_uploader.tags = []
-            log_message(LogLevel.OK, "Tags Cleared")
+            log_message(LogLevel.OK, "Tags cleared")
         case _:
             log_message(
                 LogLevel.ERROR,
