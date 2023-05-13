@@ -352,9 +352,7 @@ help: displays this message
 help advanced: display help message for advanced commands.
 quit: closes the program
 practice: learn more about practice marking
-tag add <tags>: add tags (a comma separated list) to the current set of tags.  
-    list: show the current set of tags
-    clear: remove all current tags.
+tag: learn more about tags
 comment <words>: add words as a comment on the most recent uploaded run.
 category <category>: set the current category to category.
 """
@@ -366,6 +364,7 @@ setloglevel <n>: sets the verbosity of the logging system.  0 is the most verbos
 """
 
 PRACTICE_HELP_MESSAGE = """
+Practice options are used to automatically mark certain runs or sessions as practice for stat sorting later
 practice [on|off|auto]
     on: always mark runs as practice
     off: never mark runs as practice
@@ -374,8 +373,15 @@ practice auto [clear|deaths|time] [deaths|time|<n>]
     clear:
         deaths: clear deaths threshold
         time: clear time threshold
-    deaths: set practice deaths threshold to n.  Runs with more than n deaths will be marked as practice.
-    time: set practice time threshold to n.  Runs longer than n seconds will be marked as practice.
+    deaths <n>: set practice deaths threshold to n.  Runs with more than n deaths will be marked as practice.
+    time <n>: set practice time threshold to n.  Runs longer than n seconds will be marked as practice.
+"""
+
+TAG_HELP_MESSAGE = """
+Tags are used to add custom sortable tags to your runs and sessions for stat sorting later
+tag add <tags>: add tags (a comma separated list) to the current set of tags.  
+    list: show the current set of tags
+    clear: remove all current tags.
 """
 
 VANILLA_SAVE_SLOTS = ["0", "1", "2", "debug"]

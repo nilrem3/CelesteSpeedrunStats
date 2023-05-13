@@ -6,10 +6,8 @@ def parse_command(command, il_uploader):
     match command.split():
         case ["quit"]:
             quit()
-        case ["help", "advanced"]:
-            print(constants.ADVANCED_HELP_MESSAGE)
-        case ["help"]:
-            print(constants.HELP_MESSAGE)
+        case ["help", *args]:
+            parse_help_command(args)
         case ["setloglevel", level]:
             try:
                 LogLevel.current = int(level)
@@ -20,19 +18,8 @@ def parse_command(command, il_uploader):
                 )
         case ["practice", *args]:
             parse_practice_command(args, il_uploader)
-        case ["tag", "add", *tag_data]:
-            tags = " ".join(tag_data).split(", ")
-            for tag in tags:
-                if tag not in il_uploader.tags:
-                    il_uploader.tags.append(tag)
-            tag_str = ", ".join(il_uploader.tags)
-            log_message(LogLevel.OK, f"Added session tags: {tag_str}")
-        case ["tag", "list"]:
-            tags = ", ".join(il_uploader.tags)
-            log_message(LogLevel.INFO, f"Current tags: {tags}")
-        case ["tag", "clear"]:
-            il_uploader.tags = []
-            log_message(LogLevel.OK, "Tags Cleared")
+        case ["tag", *args]:
+            parse_tag_command(args, il_uploader)
         case ["comment", *words]:
             comment = " ".join(words)
             il_uploader.add_comment(comment)
@@ -48,6 +35,51 @@ def parse_command(command, il_uploader):
             log_message(
                 LogLevel.ERROR,
                 f"'{command}' is not a recognized command, use 'help' to see valid commands.",
+            )
+
+
+def parse_help_command(args):
+    match args:
+        case []:
+            print(constants.HELP_MESSAGE)
+        case ["help"]:
+            print(constants.HELP_MESSAGE)
+        case ["advanced"]:
+            print(constants.ADVANCED_HELP_MESSAGE)
+        case ["practice"]:
+            print(constants.PRACTICE_HELP_MESSAGE)
+        case ["tag"]:
+            print(constants.TAG_HELP_MESSAGE)
+        case _:
+            log_message(
+                LogLevel.ERROR,
+                f"'{args}' is not a recognized command, use 'help' to see valid commands.",
+            )
+
+
+def parse_tag_command(args, il_uploader):
+    match args:
+        case []:
+            print(constants.TAG_HELP_MESSAGE)
+        case ["help"]:
+            print(constants.TAG_HELP_MESSAGE)
+        case ["add", *tag_data]:
+            tags = " ".join(tag_data).split(", ")
+            for tag in tags:
+                if tag not in il_uploader.tags:
+                    il_uploader.tags.append(tag)
+            tag_str = ", ".join(il_uploader.tags)
+            log_message(LogLevel.OK, f"Added session tags: {tag_str}")
+        case ["list"]:
+            tags = ", ".join(il_uploader.tags)
+            log_message(LogLevel.INFO, f"Current tags: {tags}")
+        case ["clear"]:
+            il_uploader.tags = []
+            log_message(LogLevel.OK, "Tags Cleared")
+        case _:
+            log_message(
+                LogLevel.ERROR,
+                "Invalid tag command, use 'tag' to learn more",
             )
 
 
