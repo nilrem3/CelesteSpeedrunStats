@@ -40,13 +40,16 @@ class ILDataUploader:
         if is_practice:
             log_message(LogLevel.INFO, "Run marked as practice.")
 
+        self.check_category(data)
+
         level_ids = self.datasheet.col_values(3)
         times = self.datasheet.col_values(4, value_render_option="UNFORMATTED_VALUE")
         completions = self.datasheet.col_values(13)
 
+        completed = data.get_run_completed(self.category)
         is_pb = False
         best_time = None
-        if data.completed_run:
+        if completed:
             for level_id, time, completion in zip(level_ids, times, completions):
                 if level_id != data.level_id or not completion:
                     continue
@@ -70,7 +73,7 @@ class ILDataUploader:
                 data.golden,
                 data.end_room,
                 data.first_room_deaths,
-                data.completed_run,
+                completed,
                 is_pb,
                 is_practice,
                 ", ".join(self.tags),
@@ -81,6 +84,33 @@ class ILDataUploader:
 
     def add_comment(self, comment):
         self.datasheet.update("Q2", comment)
+
+    def check_category(self, data):
+        if not data.get_run_finished():
+            return
+
+        if (
+            len(data.berries) < 3
+            and not data.heart
+            and not data.cassette
+            and data.dashes > 0
+        ):
+            self.category = "Clear"
+        if (
+            len(data.berries) == len(constants.RED_BERRY_IDS_BY_LEVEL[data.level_id])
+            and data.heart
+            and data.cassette
+        ):
+            self.category = "Full Clear"
+        elif (
+            len(data.berries) == len(constants.RED_BERRY_IDS_BY_LEVEL[data.level_id])
+            and data.heart
+        ):
+            self.category = "All Red Berries+Heart"
+        elif data.heart and data.cassette:
+            self.category = "Heart+Cassette"
+        elif data.dashes == 0:
+            self.category = "Dashless"
 
     def set_category(self, category):
         if category in constants.IL_CAT_STR_TO_CAT.keys():

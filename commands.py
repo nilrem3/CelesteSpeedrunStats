@@ -43,7 +43,7 @@ def parse_category_command(args, il_uploader):
             categories = ", ".join(constants.IL_CATEGORIES)
             log_message(
                 LogLevel.INFO,
-                f"Individual level category options include {categories}",
+                f"Individual level category options include: {categories}",
             )
         case ["current"]:
             log_message(LogLevel.INFO, f"Current category is {il_uploader.category}")
