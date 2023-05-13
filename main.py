@@ -6,10 +6,10 @@ import queue
 from logging_system import LogLevel, log_message
 from saveparser import CelesteSaveData
 from individualleveldata import CelesteIndividualLevelData
+from commands import parse_command
 import settings
 import constants
 import uploader
-import commands
 
 
 def check_settings():
@@ -156,7 +156,7 @@ def main():
         while not command_queue.empty():
             try:
                 command = command_queue.get_nowait()
-                commands.parse_command(command, il_uploader)
+                parse_command(command, il_uploader)
             except queue.Empty:
                 break
         time.sleep(0.1)
