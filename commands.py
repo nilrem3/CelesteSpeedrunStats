@@ -100,7 +100,7 @@ def parse_tag_command(args, il_uploader):
             log_message(LogLevel.INFO, f"Current tags: {tags}")
         case ["clear"]:
             il_uploader.tags = []
-            log_message(LogLevel.OK, "Tags Cleared")
+            log_message(LogLevel.OK, "Tags cleared")
         case _:
             log_message(
                 LogLevel.ERROR,
