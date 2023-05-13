@@ -93,7 +93,7 @@ def parse_tag_command(args, il_uploader):
             for tag in tags:
                 if tag not in il_uploader.tags:
                     il_uploader.tags.append(tag)
-            tag_str = ", ".join(tag_data)
+            tag_str = ", ".join(tags)
             log_message(LogLevel.OK, f"Added session tag(s): {tag_str}")
         case ["list"]:
             tags = ", ".join(il_uploader.tags)
