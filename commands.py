@@ -24,7 +24,30 @@ def parse_command(command, il_uploader):
             comment = " ".join(words)
             il_uploader.add_comment(comment)
             log_message(LogLevel.OK, f"Set comment of previous run to '{comment}'")
-        case ["category", *new_cat]:
+        case ["category", *args]:
+            parse_category_command(args, il_uploader)
+        case _:
+            log_message(
+                LogLevel.ERROR,
+                f"'{command}' is not a recognized command, use 'help' to see valid commands.",
+            )
+
+
+def parse_category_command(args, il_uploader):
+    match args:
+        case []:
+            log_message(LogLevel.INFO, f"Current category is {il_uploader.category}")
+        case ["help"]:
+            print(constants.CATEGORY_HELP_MESSAGE)
+        case ["list"]:
+            categories = ", ".join(constants.IL_CATEGORIES)
+            log_message(
+                LogLevel.INFO,
+                f"Individual level category options include {categories}",
+            )
+        case ["current"]:
+            log_message(LogLevel.INFO, f"Current category is {il_uploader.category}")
+        case ["set", *new_cat]:
             new_cat = " ".join(new_cat)
             success = il_uploader.set_category(new_cat)
             if success:
@@ -32,10 +55,12 @@ def parse_command(command, il_uploader):
             else:
                 log_message(LogLevel.ERROR, f"{new_cat} is not a valid category.")
         case _:
-            log_message(
-                LogLevel.ERROR,
-                f"'{command}' is not a recognized command, use 'help' to see valid commands.",
-            )
+            new_cat = " ".join(args)
+            success = il_uploader.set_category(new_cat)
+            if success:
+                log_message(LogLevel.OK, f"Category changed to {new_cat}")
+            else:
+                log_message(LogLevel.ERROR, f"{new_cat} is not a valid category.")
 
 
 def parse_help_command(args):
@@ -86,7 +111,8 @@ def parse_tag_command(args, il_uploader):
 def parse_practice_command(args, il_uploader):
     match args:
         case []:
-            print(constants.PRACTICE_HELP_MESSAGE)
+            il_uploader.practice_mode = "on"
+            log_message(LogLevel.OK, "All runs will be marked as practice")
         case ["help"]:
             print(constants.PRACTICE_HELP_MESSAGE)
         case ["on"]:
@@ -148,5 +174,5 @@ def parse_practice_command(args, il_uploader):
         case _:
             log_message(
                 LogLevel.ERROR,
-                "Invalid practice command, use 'practice' to learn more",
+                "Invalid practice command, use 'practice help' to learn more",
             )

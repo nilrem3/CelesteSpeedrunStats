@@ -351,7 +351,7 @@ HELP_MESSAGE = """
 help: displays this message
 help advanced: display help message for advanced commands.
 quit: closes the program
-practice: learn more about practice marking
+practice help: learn more about practice marking
 tag: learn more about tags
 comment <words>: add words as a comment on the most recent uploaded run.
 category <category>: set the current category to category.
@@ -364,7 +364,7 @@ setloglevel <n>: sets the verbosity of the logging system.  0 is the most verbos
 """
 
 PRACTICE_HELP_MESSAGE = """
-Practice options are used to automatically mark certain runs or sessions as practice for stat sorting later
+Practice options are used to automatically mark certain runs or sessions as practice for stat sorting.
 practice [on|off|auto]
     on: always mark runs as practice
     off: never mark runs as practice
@@ -378,11 +378,43 @@ practice auto [clear|deaths|time] [deaths|time|<n>]
 """
 
 TAG_HELP_MESSAGE = """
-Tags are used to add custom sortable tags to your runs and sessions for stat sorting later
+Tags are used to add custom sortable tags to your runs and sessions for stat sorting.
 tag add <tags>: add tags (a comma separated list) to the current set of tags.  
     list: show the current set of tags
     clear: remove all current tags.
 """
 
+CATEGORY_HELP_MESSAGE = """
+Category is used to keep track of what you are running and used for sorting data
+category set <category>: set the current category to category.
+         current: prints the current set category
+         list: lists all category options
+"""
+
 VANILLA_SAVE_SLOTS = ["0", "1", "2", "debug"]
-IL_CATEGORIES = ["clear", "full clear", "arb+heart", "heart+cassette", "dashless"]
+
+IL_CAT_STR_TO_CAT = {
+    "Clear": 0,
+    "clear": 0,
+    "Full Clear": 1,
+    "full clear": 1,
+    "FC": 1,
+    "fc": 1,
+    "All Red Berries+Heart": 2,
+    "all red berries+heart": 2,
+    "ARB+Heart": 2,
+    "ARB+heart": 2,
+    "arb+heart": 2,
+    "Heart+Cassette": 3,
+    "heart+cassette": 3,
+    "Dashless": 4,
+    "dashless": 4,
+}
+
+IL_CATEGORIES = [
+    "Clear",
+    "Full Clear",
+    "All Red Berries+Heart",
+    "Heart+Cassette",
+    "Dashless",
+]

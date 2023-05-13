@@ -10,7 +10,7 @@ class ILDataUploader:
         self.death_threshold = None
         self.time_threshold = None
         self.tags = []
-        self.category = "clear"
+        self.category = "Clear"
         self.practice_mode = "off"
 
     def setup_sheet(self, settings) -> bool:
@@ -83,8 +83,10 @@ class ILDataUploader:
         self.datasheet.update("Q2", comment)
 
     def set_category(self, category):
-        if category in constants.IL_CATEGORIES:
-            self.category = category
+        if category in constants.IL_CAT_STR_TO_CAT.keys():
+            self.category = constants.IL_CATEGORIES[
+                constants.IL_CAT_STR_TO_CAT[category]
+            ]
             return True
         return False
 
