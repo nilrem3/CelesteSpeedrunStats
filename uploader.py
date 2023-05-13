@@ -55,8 +55,9 @@ class ILDataUploader:
         )
 
         completed = data.get_run_completed(self.category)
-        is_pb = True
+        is_pb = False
         if completed:
+            is_pb = True
             for level_id, time, category in zip(level_ids, bests, categories):
                 if level_id != data.level_id or category != self.category:
                     continue
