@@ -354,6 +354,11 @@ quit: closes the program
 threshold [deaths|time] <n>
     deaths: set the death threshold to n.  Any run with more than n deaths will be marked as a practice run.
     time: set the time threshold to n.  Any run that took longer than n seconds will be marked as a practice run.
+tag add <tags>: add tags (a comma separated list) to the current set of tags.  
+    list: show the current set of tags
+    clear: remove all current tags.
+comment <words>: add words as a comment on the most recent uploaded run.
+category <category>: set the current category to category.
 """
 
 ADVANCED_HELP_MESSAGE = """
@@ -363,3 +368,4 @@ setloglevel <n>: sets the verbosity of the logging system.  0 is the most verbos
 """
 
 VANILLA_SAVE_SLOTS = ["0", "1", "2", "debug"]
+IL_CATEGORIES = ["clear", "full clear", "arb+heart", "heart+cassette", "dashless"]
