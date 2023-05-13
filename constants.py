@@ -352,9 +352,9 @@ help: displays this message
 help advanced: display help message for advanced commands.
 quit: closes the program
 practice help: learn more about practice marking
-tag: learn more about tags
+tag help: learn more about tags
+category help: learn more about setting your run category
 comment <words>: add words as a comment on the most recent uploaded run.
-category <category>: set the current category to category.
 """
 
 ADVANCED_HELP_MESSAGE = """
@@ -364,7 +364,7 @@ setloglevel <n>: sets the verbosity of the logging system.  0 is the most verbos
 """
 
 PRACTICE_HELP_MESSAGE = """
-Practice options are used to automatically mark certain runs or sessions as practice for stat sorting.
+Practice options are used to automatically mark certain runs or sessions as practice for stat sorting. Thresholds do not save if you close the tracker, you will have to re-set them.
 practice [on|off|auto]
     on: always mark runs as practice
     off: never mark runs as practice
@@ -378,14 +378,14 @@ practice auto [clear|deaths|time] [deaths|time|<n>]
 """
 
 TAG_HELP_MESSAGE = """
-Tags are used to add custom sortable tags to your runs and sessions for stat sorting.
+Tags are used to add custom sortable tags to your runs and sessions for stat sorting. Tags do not save if you close the tracker, you will have to re-set them.
 tag add <tags>: add tags (a comma separated list) to the current set of tags.  
     list: show the current set of tags
     clear: remove all current tags.
 """
 
 CATEGORY_HELP_MESSAGE = """
-Category is used to keep track of what you are running and used for sorting data
+Category is used to keep track of what you are running and used for sorting data, your category will be automatically changed if the program detects a new run.
 category set <category>: set the current category to category.
          current: prints the current set category
          list: lists all category options
