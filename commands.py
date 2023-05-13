@@ -20,18 +20,23 @@ def parse_command(command, il_uploader):
                 )
         case ["practice", *args]:
             parse_practice_command(args, il_uploader)
-        case ["tag", "add", *tags]:
-            for tag in " ".join(tags).split(", "):
+        case ["tag", "add", *tag_data]:
+            tags = " ".join(tag_data).split(", ")
+            for tag in tags:
                 if tag not in il_uploader.tags:
                     il_uploader.tags.append(tag)
+            tag_str = ", ".join(il_uploader.tags)
+            log_message(LogLevel.OK, f"Added session tags: {tag_str}")
         case ["tag", "list"]:
-            print("Current tags: " + ", ".join(il_uploader.tags))
+            tags = ", ".join(il_uploader.tags)
+            log_message(LogLevel.INFO, f"Current tags: {tags}")
         case ["tag", "clear"]:
             il_uploader.tags = []
             log_message(LogLevel.OK, "Tags Cleared")
         case ["comment", *words]:
             comment = " ".join(words)
             il_uploader.add_comment(comment)
+            log_message(LogLevel.OK, f"Set comment of previous run to '{comment}'")
         case ["category", *new_cat]:
             new_cat = " ".join(new_cat)
             success = il_uploader.set_category(new_cat)
