@@ -51,14 +51,14 @@ def parse_category_command(args, il_uploader):
             new_cat = " ".join(new_cat)
             success = il_uploader.set_category(new_cat)
             if success:
-                log_message(LogLevel.OK, f"Category changed to {new_cat}")
+                log_message(LogLevel.OK, f"Category changed to {il_uploader.category}")
             else:
                 log_message(LogLevel.ERROR, f"{new_cat} is not a valid category.")
         case _:
             new_cat = " ".join(args)
             success = il_uploader.set_category(new_cat)
             if success:
-                log_message(LogLevel.OK, f"Category changed to {new_cat}")
+                log_message(LogLevel.OK, f"Category changed to {il_uploader.category}")
             else:
                 log_message(LogLevel.ERROR, f"{new_cat} is not a valid category.")
 
