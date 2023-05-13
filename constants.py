@@ -45,7 +45,7 @@ ENDS_WITH_HEART = {
     "8a": False,
     "8b": True,
     "8c": True,
-    "9": False
+    "9": False,
 }
 
 # UNFINISHED
@@ -351,9 +351,7 @@ HELP_MESSAGE = """
 help: displays this message
 help advanced: display help message for advanced commands.
 quit: closes the program
-threshold [deaths|time] <n>
-    deaths: set the death threshold to n.  Any run with more than n deaths will be marked as a practice run.
-    time: set the time threshold to n.  Any run that took longer than n seconds will be marked as a practice run.
+practice: learn more about practice marking
 tag add <tags>: add tags (a comma separated list) to the current set of tags.  
     list: show the current set of tags
     clear: remove all current tags.
@@ -365,6 +363,19 @@ ADVANCED_HELP_MESSAGE = """
 ===ADVANCED MODE===
 these commands shouldn't be necessary to use this program, but advanced users may find them helpful in certain cases.
 setloglevel <n>: sets the verbosity of the logging system.  0 is the most verbose, 4 is the least.
+"""
+
+PRACTICE_HELP_MESSAGE = """
+practice [on|off|auto]
+    on: always mark runs as practice
+    off: never mark runs as practice
+    auto: runs will be marked as practice if they meet auto thresholds
+practice auto [clear|deaths|time] [deaths|time|<n>]
+    clear:
+        deaths: clear deaths threshold
+        time: clear time threshold
+    deaths: set practice deaths threshold to n.  Runs with more than n deaths will be marked as practice.
+    time: set practice time threshold to n.  Runs longer than n seconds will be marked as practice.
 """
 
 VANILLA_SAVE_SLOTS = ["0", "1", "2", "debug"]

@@ -11,6 +11,7 @@ class ILDataUploader:
         self.time_threshold = None
         self.tags = []
         self.category = "clear"
+        self.practice_mode = "off"
 
     def setup_sheet(self, settings) -> bool:
         try:
@@ -34,16 +35,7 @@ class ILDataUploader:
         return True
 
     def upload_run_to_sheet(self, data: CelesteIndividualLevelData):
-
-        is_practice = False
-
-        if self.death_threshold is not None:
-            if data.deaths > self.death_threshold:
-                is_practice = True
-
-        if self.time_threshold is not None:
-            if data.run_time / 36000000000 / 24 > self.time_threshold:
-                is_practice = True
+        is_practice = self.get_is_practice()
 
         if is_practice:
             log_message(LogLevel.INFO, "Run marked as practice.")
@@ -51,7 +43,7 @@ class ILDataUploader:
         level_ids = self.datasheet.col_values(3)
         times = self.datasheet.col_values(4, value_render_option="UNFORMATTED_VALUE")
         completions = self.datasheet.col_values(13)
-        
+
         is_pb = False
         best_time = None
         if data.completed_run:
@@ -81,17 +73,31 @@ class ILDataUploader:
                 data.completed_run,
                 is_pb,
                 is_practice,
-                ", ".join(self.tags)
+                ", ".join(self.tags),
             ],
             index=2,
-            value_input_option="USER_ENTERED"
+            value_input_option="USER_ENTERED",
         )
 
     def add_comment(self, comment):
-        self.datasheet.update('Q2', comment)
+        self.datasheet.update("Q2", comment)
 
     def set_category(self, category):
         if category in constants.IL_CATEGORIES:
             self.category = category
             return True
         return False
+
+    def get_is_practice(self, data):
+        if self.practice_mode == "on":
+            return True
+        elif self.practice_mode == "off":
+            return False
+
+        if self.death_threshold is not None:
+            if data.deaths > self.death_threshold:
+                return True
+
+        if self.time_threshold is not None:
+            if data.run_time / 36000000000 / 24 > self.time_threshold:
+                return True
