@@ -35,7 +35,7 @@ class ILDataUploader:
         return True
 
     def upload_run_to_sheet(self, data: CelesteIndividualLevelData):
-        is_practice = self.get_is_practice()
+        is_practice = self.get_is_practice(data)
 
         if is_practice:
             log_message(LogLevel.INFO, "Run marked as practice.")
