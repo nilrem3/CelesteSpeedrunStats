@@ -37,3 +37,6 @@ def parse_command(command, il_uploader):
         case ["tag", "clear"]:
             il_uploader.tags = []
             log_message(LogLevel.OK, "Tags Cleared")
+        case ["comment", *words]:
+            comment = " ".join(words)
+            il_uploader.add_comment(comment)
