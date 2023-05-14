@@ -86,6 +86,9 @@ def input_loop(msg_queue):
 def main():
     # check if settings exists
     settings = check_settings()
+    credentials = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "credentials.json"
+    )
 
     if not settings["ILSaveSlot"] in constants.VANILLA_SAVE_SLOTS:
         log_message(
@@ -139,7 +142,7 @@ def main():
     log_message(LogLevel.OK, "Started Command Thread")
 
     il_uploader = uploader.ILDataUploader()
-    success = il_uploader.setup_sheet(settings)
+    success = il_uploader.setup_sheet(settings, credentials)
     if not success:
         log_message(LogLevel.FATAL, "Failed to set up Google Sheet.")
         quit()

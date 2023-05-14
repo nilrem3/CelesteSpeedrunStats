@@ -1,3 +1,4 @@
+import os
 import gspread
 from logging_system import LogLevel, log_message
 from individualleveldata import CelesteIndividualLevelData
@@ -12,9 +13,9 @@ class ILDataUploader:
         self.tags = []
         self.category = "clear"
 
-    def setup_sheet(self, settings) -> bool:
+    def setup_sheet(self, settings, credentials) -> bool:
         try:
-            gc = gspread.service_account(filename="credentials.json")
+            gc = gspread.service_account(filename=credentials)
         except OSError:
             log_message(LogLevel.ERROR, "Failed to find credentials.json")
             return False
