@@ -13,7 +13,10 @@ import commands
 
 
 def check_settings():
-    if os.path.isfile("./settings.json"):
+    settings_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "settings.json"
+    )
+    if os.path.isfile(settings_path):
         # settings file exists
         with open("./settings.json", "r") as f:
             return fill_in_missing_settings(json.loads(f.read()))
@@ -22,6 +25,9 @@ def check_settings():
 
 
 def fill_in_missing_settings(settings_object):
+    settings_path = os.path.join(
+        os.path.dirname(os.path.abspath(__file__)), "settings.json"
+    )
     for s in settings.SETTINGS:
         if not s.name in settings_object:
             print(f"Setting {s.name} not found.")
