@@ -13,20 +13,22 @@ import uploader
 
 
 def check_settings():
-    if os.path.isfile("./settings.json"):
+    settings_path = os.path.join(os.path.realpath(), "settings.json")
+    if os.path.isfile(settings_path):
         # settings file exists
-        with open("./settings.json", "r") as f:
+        with open(settings_path, "r") as f:
             return fill_in_missing_settings(json.loads(f.read()))
     else:
         return fill_in_missing_settings({})
 
 
 def fill_in_missing_settings(settings_object):
+    settings_path = os.path.join(os.path.realpath(), "settings.json")
     for s in settings.SETTINGS:
         if not s.name in settings_object:
             print(f"Setting {s.name} not found.")
             settings_object[s.name] = s.get_from_user()
-    with open("./settings.json", "w") as f:
+    with open(settings_path, "w") as f:
         f.write(json.dumps(settings_object))
         return settings_object
 
