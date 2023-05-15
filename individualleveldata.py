@@ -136,5 +136,10 @@ class CelesteIndividualLevelData:
         self.end_room = save.current_session_end_room
         if self.previous_save_data is not None:
             self.first_room_deaths = (
-                save.death_count - self.previous_save_data.death_count
-            ) - save.current_session_deaths
+                (save.death_count - self.previous_save_data.death_count)
+                - save.current_session_deaths
+                if (save.death_count - self.previous_save_data.death_count)
+                - save.current_session_deaths
+                < 0
+                else 0
+            )
