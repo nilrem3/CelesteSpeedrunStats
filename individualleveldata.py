@@ -33,7 +33,7 @@ class CelesteIndividualLevelData:
         save = CelesteSaveData(xml)
 
         self.update_data_from_save(save)
-        self.run_date_and_time = datetime.now().strftime("%d/%m/%Y %H:%M:%S")
+        self.run_date_and_time = datetime.now().strftime("%m/%d/%Y %H:%M:%S")
 
         # If there is no previous data this is the first time updating the file, return early
         if self.previous_save_data is None:
